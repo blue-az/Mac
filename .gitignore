@@ -1,0 +1,22 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Database
+*.db
+*.db-journal
+
+# Downloads/imports
+downloads/
+imports/*.fit
+imports/*.FIT
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
