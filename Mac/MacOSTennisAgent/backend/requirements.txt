@@ -1,0 +1,29 @@
+# Web Framework
+fastapi==0.115.0
+uvicorn[standard]==0.31.0
+websockets==13.1
+
+# Data Processing
+numpy>=1.24.0,<2.0.0
+scipy>=1.10.0,<2.0.0
+pandas>=2.0.0,<3.0.0
+
+# Database
+aiosqlite==0.20.0
+
+# Data Validation
+pydantic==2.9.2
+pydantic-settings==2.6.0
+
+# Utilities
+python-dotenv==1.0.1
+pyyaml==6.0.2
+
+# Testing
+pytest==8.3.3
+pytest-asyncio==0.24.0
+httpx==0.27.2
+
+# Optional: Visualization (development only)
+matplotlib>=3.7.0
+plotly>=5.0.0

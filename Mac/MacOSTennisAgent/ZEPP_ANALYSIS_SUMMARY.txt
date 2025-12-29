@@ -1,0 +1,16 @@
+
+======================================================================
+ZEPP U TENNIS DATA SUMMARY
+======================================================================
+total_sessions: 117
+total_shots: 16715
+total_minutes: 4213
+date_range: 2022-07-19 to 2025-11-08
+shot_types:
+  backhand: 7126
+  forehand: 3175
+  serve: 2614
+  unknown: 3800
+shots_with_velocity: 933
+avg_racket_speed_mph: 57.1
+max_racket_speed_mph: 105.0

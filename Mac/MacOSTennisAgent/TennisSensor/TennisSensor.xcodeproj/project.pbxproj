@@ -1,0 +1,829 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C585733C2DC34FEF00EA0748 /* WatchTennisSensor Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C58573322DC34FED00EA0748 /* WatchTennisSensor Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C5F6880B2ECC878500CA7763 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C5F6880A2ECC878500CA7763 /* libsqlite3.tbd */; };
+		C5F6880D2ECC879900CA7763 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C5F6880C2ECC879900CA7763 /* libz.tbd */; };
+		C5F6880F2ECC87B400CA7763 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5F6880E2ECC87B400CA7763 /* Network.framework */; };
+		C5F6883D2ECC8C7E00CA7763 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5F688342ECC8C7E00CA7763 /* Assets.xcassets */; };
+		C5F6883E2ECC8C7E00CA7763 /* TennisSensorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F6883B2ECC8C7E00CA7763 /* TennisSensorApp.swift */; };
+		C5F6883F2ECC8C7E00CA7763 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F688362ECC8C7E00CA7763 /* ContentView.swift */; };
+		C5F688402ECC8C7E00CA7763 /* LocalDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F688382ECC8C7E00CA7763 /* LocalDatabase.swift */; };
+		C5F688412ECC8C7E00CA7763 /* HTTPFileServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F688372ECC8C7E00CA7763 /* HTTPFileServer.swift */; };
+		C5F688422ECC8C7E00CA7763 /* SensorSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F688392ECC8C7E00CA7763 /* SensorSample.swift */; };
+		C5F688432ECC8C7E00CA7763 /* BackendClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F688352ECC8C7E00CA7763 /* BackendClient.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C529BB822DC33A0500C29594 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C529BB722DC33A0100C29594;
+			remoteInfo = TennisSensor;
+		};
+		C529BB8C2DC33A0500C29594 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C529BB722DC33A0100C29594;
+			remoteInfo = TennisSensor;
+		};
+		C585733A2DC34FEF00EA0748 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C58573312DC34FED00EA0748;
+			remoteInfo = "WatchTennisSensor Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C58573402DC34FEF00EA0748 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				C585733C2DC34FEF00EA0748 /* WatchTennisSensor Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C529BB732DC33A0100C29594 /* TennisSensor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TennisSensor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C529BB812DC33A0500C29594 /* TennisSensorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TennisSensorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C529BB8B2DC33A0500C29594 /* TennisSensorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TennisSensorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C58573322DC34FED00EA0748 /* WatchTennisSensor Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchTennisSensor Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C5F6880A2ECC878500CA7763 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.4.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
+		C5F6880C2ECC879900CA7763 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.4.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		C5F6880E2ECC87B400CA7763 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.4.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
+		C5F688342ECC8C7E00CA7763 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C5F688352ECC8C7E00CA7763 /* BackendClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendClient.swift; sourceTree = "<group>"; };
+		C5F688362ECC8C7E00CA7763 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C5F688372ECC8C7E00CA7763 /* HTTPFileServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPFileServer.swift; sourceTree = "<group>"; };
+		C5F688382ECC8C7E00CA7763 /* LocalDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDatabase.swift; sourceTree = "<group>"; };
+		C5F688392ECC8C7E00CA7763 /* SensorSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSample.swift; sourceTree = "<group>"; };
+		C5F6883A2ECC8C7E00CA7763 /* TennisSensor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TennisSensor.entitlements; sourceTree = "<group>"; };
+		C5F6883B2ECC8C7E00CA7763 /* TennisSensorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TennisSensorApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C529BB752DC33A0100C29594 /* TennisSensor */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TennisSensor;
+			sourceTree = "<group>";
+		};
+		C529BB842DC33A0500C29594 /* TennisSensorTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TennisSensorTests;
+			sourceTree = "<group>";
+		};
+		C529BB8E2DC33A0500C29594 /* TennisSensorUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TennisSensorUITests;
+			sourceTree = "<group>";
+		};
+		C58573332DC34FED00EA0748 /* WatchTennisSensor Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "WatchTennisSensor Watch App";
+			sourceTree = "<group>";
+		};
+		C58573462DC3597600EA0748 /* WatchTennisSensor */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WatchTennisSensor;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C529BB702DC33A0100C29594 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C5F6880F2ECC87B400CA7763 /* Network.framework in Frameworks */,
+				C5F6880D2ECC879900CA7763 /* libz.tbd in Frameworks */,
+				C5F6880B2ECC878500CA7763 /* libsqlite3.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C529BB7E2DC33A0500C29594 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C529BB882DC33A0500C29594 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C585732F2DC34FED00EA0748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C529BB6A2DC33A0100C29594 = {
+			isa = PBXGroup;
+			children = (
+				C5F6883C2ECC8C7E00CA7763 /* TennisSensor */,
+				C529BB752DC33A0100C29594 /* TennisSensor */,
+				C529BB842DC33A0500C29594 /* TennisSensorTests */,
+				C529BB8E2DC33A0500C29594 /* TennisSensorUITests */,
+				C58573332DC34FED00EA0748 /* WatchTennisSensor Watch App */,
+				C58573462DC3597600EA0748 /* WatchTennisSensor */,
+				C529BB742DC33A0100C29594 /* Products */,
+				C5F688092ECC878500CA7763 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		C529BB742DC33A0100C29594 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C529BB732DC33A0100C29594 /* TennisSensor.app */,
+				C529BB812DC33A0500C29594 /* TennisSensorTests.xctest */,
+				C529BB8B2DC33A0500C29594 /* TennisSensorUITests.xctest */,
+				C58573322DC34FED00EA0748 /* WatchTennisSensor Watch App.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C5F688092ECC878500CA7763 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C5F6880E2ECC87B400CA7763 /* Network.framework */,
+				C5F6880C2ECC879900CA7763 /* libz.tbd */,
+				C5F6880A2ECC878500CA7763 /* libsqlite3.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C5F6883C2ECC8C7E00CA7763 /* TennisSensor */ = {
+			isa = PBXGroup;
+			children = (
+				C5F688342ECC8C7E00CA7763 /* Assets.xcassets */,
+				C5F688352ECC8C7E00CA7763 /* BackendClient.swift */,
+				C5F688362ECC8C7E00CA7763 /* ContentView.swift */,
+				C5F688372ECC8C7E00CA7763 /* HTTPFileServer.swift */,
+				C5F688382ECC8C7E00CA7763 /* LocalDatabase.swift */,
+				C5F688392ECC8C7E00CA7763 /* SensorSample.swift */,
+				C5F6883A2ECC8C7E00CA7763 /* TennisSensor.entitlements */,
+				C5F6883B2ECC8C7E00CA7763 /* TennisSensorApp.swift */,
+			);
+			path = TennisSensor;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C529BB722DC33A0100C29594 /* TennisSensor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C529BB952DC33A0500C29594 /* Build configuration list for PBXNativeTarget "TennisSensor" */;
+			buildPhases = (
+				C529BB6F2DC33A0100C29594 /* Sources */,
+				C529BB702DC33A0100C29594 /* Frameworks */,
+				C529BB712DC33A0100C29594 /* Resources */,
+				C58573402DC34FEF00EA0748 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C585733B2DC34FEF00EA0748 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C529BB752DC33A0100C29594 /* TennisSensor */,
+			);
+			name = TennisSensor;
+			packageProductDependencies = (
+			);
+			productName = TennisSensor;
+			productReference = C529BB732DC33A0100C29594 /* TennisSensor.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C529BB802DC33A0500C29594 /* TennisSensorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C529BB982DC33A0500C29594 /* Build configuration list for PBXNativeTarget "TennisSensorTests" */;
+			buildPhases = (
+				C529BB7D2DC33A0500C29594 /* Sources */,
+				C529BB7E2DC33A0500C29594 /* Frameworks */,
+				C529BB7F2DC33A0500C29594 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C529BB832DC33A0500C29594 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C529BB842DC33A0500C29594 /* TennisSensorTests */,
+			);
+			name = TennisSensorTests;
+			packageProductDependencies = (
+			);
+			productName = TennisSensorTests;
+			productReference = C529BB812DC33A0500C29594 /* TennisSensorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C529BB8A2DC33A0500C29594 /* TennisSensorUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C529BB9B2DC33A0500C29594 /* Build configuration list for PBXNativeTarget "TennisSensorUITests" */;
+			buildPhases = (
+				C529BB872DC33A0500C29594 /* Sources */,
+				C529BB882DC33A0500C29594 /* Frameworks */,
+				C529BB892DC33A0500C29594 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C529BB8D2DC33A0500C29594 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C529BB8E2DC33A0500C29594 /* TennisSensorUITests */,
+			);
+			name = TennisSensorUITests;
+			packageProductDependencies = (
+			);
+			productName = TennisSensorUITests;
+			productReference = C529BB8B2DC33A0500C29594 /* TennisSensorUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		C58573312DC34FED00EA0748 /* WatchTennisSensor Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C585733D2DC34FEF00EA0748 /* Build configuration list for PBXNativeTarget "WatchTennisSensor Watch App" */;
+			buildPhases = (
+				C585732E2DC34FED00EA0748 /* Sources */,
+				C585732F2DC34FED00EA0748 /* Frameworks */,
+				C58573302DC34FED00EA0748 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C58573332DC34FED00EA0748 /* WatchTennisSensor Watch App */,
+			);
+			name = "WatchTennisSensor Watch App";
+			packageProductDependencies = (
+			);
+			productName = "WatchTennisSensor Watch App";
+			productReference = C58573322DC34FED00EA0748 /* WatchTennisSensor Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C529BB6B2DC33A0100C29594 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					C529BB722DC33A0100C29594 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					C529BB802DC33A0500C29594 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = C529BB722DC33A0100C29594;
+					};
+					C529BB8A2DC33A0500C29594 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = C529BB722DC33A0100C29594;
+					};
+					C58573312DC34FED00EA0748 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+				};
+			};
+			buildConfigurationList = C529BB6E2DC33A0100C29594 /* Build configuration list for PBXProject "TennisSensor" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C529BB6A2DC33A0100C29594;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C529BB742DC33A0100C29594 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C529BB722DC33A0100C29594 /* TennisSensor */,
+				C529BB802DC33A0500C29594 /* TennisSensorTests */,
+				C529BB8A2DC33A0500C29594 /* TennisSensorUITests */,
+				C58573312DC34FED00EA0748 /* WatchTennisSensor Watch App */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C529BB712DC33A0100C29594 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C5F6883D2ECC8C7E00CA7763 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C529BB7F2DC33A0500C29594 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C529BB892DC33A0500C29594 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C58573302DC34FED00EA0748 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C529BB6F2DC33A0100C29594 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C5F6883E2ECC8C7E00CA7763 /* TennisSensorApp.swift in Sources */,
+				C5F6883F2ECC8C7E00CA7763 /* ContentView.swift in Sources */,
+				C5F688402ECC8C7E00CA7763 /* LocalDatabase.swift in Sources */,
+				C5F688412ECC8C7E00CA7763 /* HTTPFileServer.swift in Sources */,
+				C5F688422ECC8C7E00CA7763 /* SensorSample.swift in Sources */,
+				C5F688432ECC8C7E00CA7763 /* BackendClient.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C529BB7D2DC33A0500C29594 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C529BB872DC33A0500C29594 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C585732E2DC34FED00EA0748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C529BB832DC33A0500C29594 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C529BB722DC33A0100C29594 /* TennisSensor */;
+			targetProxy = C529BB822DC33A0500C29594 /* PBXContainerItemProxy */;
+		};
+		C529BB8D2DC33A0500C29594 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C529BB722DC33A0100C29594 /* TennisSensor */;
+			targetProxy = C529BB8C2DC33A0500C29594 /* PBXContainerItemProxy */;
+		};
+		C585733B2DC34FEF00EA0748 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C58573312DC34FED00EA0748 /* WatchTennisSensor Watch App */;
+			targetProxy = C585733A2DC34FEF00EA0748 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		C529BB932DC33A0500C29594 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C529BB942DC33A0500C29594 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		C529BB962DC33A0500C29594 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TennisSensor/TennisSensor.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ef.TennisSensor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		C529BB972DC33A0500C29594 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = TennisSensor/TennisSensor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ef.TennisSensor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
+		C529BB992DC33A0500C29594 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ef.TennisSensorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TennisSensor.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TennisSensor";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		C529BB9A2DC33A0500C29594 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ef.TennisSensorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TennisSensor.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TennisSensor";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
+		C529BB9C2DC33A0500C29594 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ef.TennisSensorUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = TennisSensor;
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		C529BB9D2DC33A0500C29594 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ef.TennisSensorUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = TennisSensor;
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
+		C585733E2DC34FEF00EA0748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WatchTennisSensor Watch App/WatchTennisSensor Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WatchTennisSensor-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = WatchTennisSensor;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Tennis Sensor saves your tennis session data to HealthKit.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to motion sensors to detect and analyze your tennis swings in real-time.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ef.TennisSensor;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ef.TennisSensor.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Debug;
+		};
+		C585733F2DC34FEF00EA0748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WatchTennisSensor Watch App/WatchTennisSensor Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "WatchTennisSensor-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = WatchTennisSensor;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Tennis Sensor saves your tennis session data to HealthKit.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to motion sensors to detect and analyze your tennis swings in real-time.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ef.TennisSensor;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ef.TennisSensor.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C529BB6E2DC33A0100C29594 /* Build configuration list for PBXProject "TennisSensor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C529BB932DC33A0500C29594 /* Debug */,
+				C529BB942DC33A0500C29594 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C529BB952DC33A0500C29594 /* Build configuration list for PBXNativeTarget "TennisSensor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C529BB962DC33A0500C29594 /* Debug */,
+				C529BB972DC33A0500C29594 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C529BB982DC33A0500C29594 /* Build configuration list for PBXNativeTarget "TennisSensorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C529BB992DC33A0500C29594 /* Debug */,
+				C529BB9A2DC33A0500C29594 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C529BB9B2DC33A0500C29594 /* Build configuration list for PBXNativeTarget "TennisSensorUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C529BB9C2DC33A0500C29594 /* Debug */,
+				C529BB9D2DC33A0500C29594 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C585733D2DC34FEF00EA0748 /* Build configuration list for PBXNativeTarget "WatchTennisSensor Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C585733E2DC34FEF00EA0748 /* Debug */,
+				C585733F2DC34FEF00EA0748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C529BB6B2DC33A0100C29594 /* Project object */;
+}
