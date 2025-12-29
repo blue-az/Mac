@@ -22,6 +22,20 @@ from pathlib import Path
 from datetime import datetime
 from typing import List, Optional
 
+
+def datetime_to_str(dt):
+    """Convert datetime to ISO string, or return None."""
+    if isinstance(dt, datetime):
+        return dt.isoformat()
+    return dt
+
+
+def json_serializer(obj):
+    """JSON serializer for datetime objects."""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    raise TypeError(f"Type {type(obj)} not serializable")
+
 # Add parent directory to path for imports
 SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR.parent))
@@ -57,6 +71,14 @@ def import_activity(conn: sqlite3.Connection, parser: FitFileParser, fit_path: P
     hr_samples = parser.extract_heart_rate()
     hr_zones = parser.get_hr_zones()
 
+    # Convert datetime values to ISO strings
+    start_time = datetime_to_str(metadata.get("start_time"))
+    end_time = datetime_to_str(metadata.get("end_time"))
+
+    # Skip files without start_time
+    if not start_time:
+        raise ValueError("No start_time in activity")
+
     cursor = conn.cursor()
 
     # Insert activity
@@ -69,16 +91,16 @@ def import_activity(conn: sqlite3.Connection, parser: FitFileParser, fit_path: P
     """, (
         str(fit_path.name),
         metadata.get("activity_type", "unknown"),
-        metadata.get("start_time"),
-        metadata.get("end_time"),
+        start_time,
+        end_time,
         metadata.get("duration_seconds"),
         metadata.get("distance_meters"),
         metadata.get("calories"),
         metadata.get("avg_hr"),
         metadata.get("max_hr"),
         metadata.get("min_hr"),
-        json.dumps(hr_zones),
-        json.dumps(metadata)
+        json.dumps(hr_zones, default=json_serializer),
+        json.dumps(metadata, default=json_serializer)
     ))
 
     activity_id = cursor.lastrowid
@@ -89,7 +111,7 @@ def import_activity(conn: sqlite3.Connection, parser: FitFileParser, fit_path: P
             INSERT INTO heart_rate_samples (activity_id, timestamp, heart_rate)
             VALUES (?, ?, ?)
         """, [
-            (activity_id, sample["timestamp"], sample["heart_rate"])
+            (activity_id, datetime_to_str(sample["timestamp"]), sample["heart_rate"])
             for sample in hr_samples
         ])
 
