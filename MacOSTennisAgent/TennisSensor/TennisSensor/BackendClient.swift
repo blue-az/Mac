@@ -494,6 +494,52 @@ extension BackendClient: WCSessionDelegate {
         print("✅ Complete session forwarded to backend for processing")
     }
 
+    // MARK: - Audio File Transfer (v2.7.12)
+
+    func session(_ session: WCSession, didReceive file: WCSessionFile) {
+        print("🎤 Received audio file from Watch")
+
+        guard let metadata = file.metadata,
+              let type = metadata["type"] as? String,
+              type == "audio_file",
+              let sessionId = metadata["session_id"] as? String else {
+            print("⚠️ Received file without valid audio metadata")
+            return
+        }
+
+        let duration = metadata["duration"] as? Double ?? 0
+
+        // Create audio directory in Documents
+        let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let audioDir = documentsDir.appendingPathComponent("audio")
+
+        do {
+            try FileManager.default.createDirectory(at: audioDir, withIntermediateDirectories: true)
+
+            // Move file to permanent location
+            let fileName = "audio_\(sessionId).m4a"
+            let destinationURL = audioDir.appendingPathComponent(fileName)
+
+            // Remove existing file if present
+            try? FileManager.default.removeItem(at: destinationURL)
+
+            try FileManager.default.copyItem(at: file.fileURL, to: destinationURL)
+
+            let fileSize = (try? FileManager.default.attributesOfItem(atPath: destinationURL.path)[.size] as? Int) ?? 0
+            print("🎤 Audio file saved:")
+            print("   Session: \(sessionId)")
+            print("   Duration: \(String(format: "%.1f", duration))s")
+            print("   Size: \(fileSize / 1024) KB")
+            print("   Path: \(destinationURL.path)")
+
+            // Store reference in local database (optional - could add audio_path column)
+            NSLog("✅ Audio file stored: \(fileName)")
+
+        } catch {
+            print("❌ Failed to save audio file: \(error.localizedDescription)")
+        }
+    }
+
     private func handleIncrementalBatch(_ batchData: [String: Any]) {
         NSLog("⚡️ handleIncrementalBatch called - isConnected: \(isConnected)")
         print("🔍 handleIncrementalBatch called")

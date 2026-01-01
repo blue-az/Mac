@@ -12,6 +12,8 @@ import WatchConnectivity
 struct ContentView: View {
     @StateObject private var motionManager = MotionManager()
     @StateObject private var workoutManager = WorkoutManager()
+    @StateObject private var audioManager = AudioManager()
+    @StateObject private var settings = SettingsManager.shared
     @State private var pulseAnimation = false
     @State private var wcSessionActivated = false
     @State private var showingSessionComplete = false
@@ -24,7 +26,7 @@ struct ContentView: View {
                     .font(.system(size: 20))
                     .foregroundStyle(motionManager.isRecording ? .green : .gray)
 
-                Text("TT v2.7.11")
+                Text("TT v2.7.12")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
             }
@@ -125,6 +127,21 @@ struct ContentView: View {
                 }
             }
 
+            // Audio Toggle
+            HStack(spacing: 6) {
+                Image(systemName: settings.isAudioEnabled ? "mic.fill" : "mic.slash")
+                    .font(.system(size: 12))
+                    .foregroundStyle(settings.isAudioEnabled ? .orange : .gray)
+
+                Toggle("", isOn: $settings.isAudioEnabled)
+                    .labelsHidden()
+                    .tint(.orange)
+
+                Text(settings.isAudioEnabled ? "Audio On" : "Audio Off")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            }
+
             // WC Status
             HStack(spacing: 2) {
                 Circle()
@@ -133,6 +150,16 @@ struct ContentView: View {
                 Text(wcSessionActivated ? "WC Active" : "WC Inactive")
                     .font(.system(size: 8))
                     .foregroundStyle(.secondary)
+
+                // Audio recording indicator
+                if audioManager.isRecording {
+                    Circle()
+                        .fill(Color.orange)
+                        .frame(width: 3, height: 3)
+                    Text("Rec")
+                        .font(.system(size: 8))
+                        .foregroundStyle(.orange)
+                }
             }
         }
         .padding(.horizontal, 12)
@@ -152,6 +179,12 @@ struct ContentView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             motionManager.workoutSessionActive = workoutManager.isWorkoutActive
             motionManager.startSession()
+
+            // v2.7.12: Start audio recording if enabled
+            if settings.isAudioEnabled {
+                let sessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: Date()))"
+                audioManager.startRecording(sessionId: sessionId)
+            }
         }
 
         // Haptic feedback
@@ -163,6 +196,15 @@ struct ContentView: View {
 
         // v2.6: Stop motion recording first
         motionManager.stopSession()
+
+        // v2.7.12: Stop audio recording and transfer file
+        if audioManager.isRecording {
+            if let audioURL = audioManager.stopRecording() {
+                // Get session ID from MotionManager or generate one
+                let sessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: Date()))"
+                audioManager.transferAudioFile(sessionId: sessionId)
+            }
+        }
 
         // Then end workout session
         workoutManager.stopWorkout()
@@ -176,6 +218,9 @@ struct ContentView: View {
 
         // Clear the session complete flag to return to home screen
         showingSessionComplete = false
+
+        // Cleanup any audio files
+        audioManager.cleanupRecording()
 
         // Haptic feedback
         WKInterfaceDevice.current().play(.click)

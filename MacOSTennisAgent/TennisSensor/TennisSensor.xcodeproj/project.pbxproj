@@ -717,10 +717,10 @@
 				DEVELOPMENT_TEAM = G5LQFBMGZT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WatchTennisSensor-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WatchTennisSensor;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Tennis Sensor saves your tennis session data to HealthKit.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Tennis Sensor can record audio during sessions for stroke analysis when enabled.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to motion sensors to detect and analyze your tennis swings in real-time.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ef.TennisSensor;
@@ -751,10 +751,10 @@
 				DEVELOPMENT_TEAM = G5LQFBMGZT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "WatchTennisSensor-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WatchTennisSensor;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Tennis Sensor saves your tennis session data to HealthKit.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Tennis Sensor can record audio during sessions for stroke analysis when enabled.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to motion sensors to detect and analyze your tennis swings in real-time.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ef.TennisSensor;
