@@ -29,7 +29,7 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .foregroundStyle(.green)
 
-                    Text("TT v3")
+                    Text("TT v3.1")
                         .font(.title)
                         .fontWeight(.bold)
                 }

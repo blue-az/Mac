@@ -17,6 +17,7 @@ struct ContentView: View {
     @State private var pulseAnimation = false
     @State private var wcSessionActivated = false
     @State private var showingSessionComplete = false
+    @State private var currentSessionId: String?  // v3.1: Store session ID for audio
 
     var body: some View {
         VStack(spacing: 12) {
@@ -26,7 +27,7 @@ struct ContentView: View {
                     .font(.system(size: 20))
                     .foregroundStyle(motionManager.isRecording ? .green : .gray)
 
-                Text("TT v3")
+                Text("TT v3.1")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
             }
@@ -172,6 +173,9 @@ struct ContentView: View {
     private func startSession() {
         print("🎾 Starting tennis session...")
 
+        // v3.1: Generate session ID once and store it for consistent use
+        currentSessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: Date()))"
+
         // v2.6: Start workout session FIRST to prevent screen sleep
         workoutManager.startWorkout()
 
@@ -180,9 +184,8 @@ struct ContentView: View {
             motionManager.workoutSessionActive = workoutManager.isWorkoutActive
             motionManager.startSession()
 
-            // v2.7.12: Start audio recording if enabled
-            if settings.isAudioEnabled {
-                let sessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: Date()))"
+            // v3.1: Start audio recording if enabled, using stored session ID
+            if settings.isAudioEnabled, let sessionId = currentSessionId {
                 audioManager.startRecording(sessionId: sessionId)
             }
         }
@@ -197,11 +200,9 @@ struct ContentView: View {
         // v2.6: Stop motion recording first
         motionManager.stopSession()
 
-        // v2.7.12: Stop audio recording and transfer file
-        if audioManager.isRecording {
-            if let audioURL = audioManager.stopRecording() {
-                // Get session ID from MotionManager or generate one
-                let sessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: Date()))"
+        // v3.1: Stop audio recording and transfer file using stored session ID
+        if audioManager.isRecording, let sessionId = currentSessionId {
+            if let _ = audioManager.stopRecording() {
                 audioManager.transferAudioFile(sessionId: sessionId)
             }
         }

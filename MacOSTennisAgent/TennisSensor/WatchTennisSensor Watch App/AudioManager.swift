@@ -41,20 +41,35 @@ class AudioManager: NSObject, ObservableObject {
 
     override init() {
         super.init()
-        setupAudioSession()
+        // v3.1: Only check permission on init, don't activate audio session
+        // Audio session activation moved to startRecording() to avoid
+        // conflicting with WorkoutManager's HealthKit session
         checkPermission()
     }
 
     // MARK: - Audio Session
 
-    private func setupAudioSession() {
+    /// Activates audio session - call only when starting to record
+    private func activateAudioSession() -> Bool {
         audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession?.setCategory(.record, mode: .default)
             try audioSession?.setActive(true)
-            print("🎤 Audio session configured")
+            print("🎤 Audio session activated")
+            return true
         } catch {
-            print("❌ Audio session setup failed: \(error.localizedDescription)")
+            print("❌ Audio session activation failed: \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// Deactivates audio session - call when stopping recording
+    private func deactivateAudioSession() {
+        do {
+            try audioSession?.setActive(false, options: .notifyOthersOnDeactivation)
+            print("🎤 Audio session deactivated")
+        } catch {
+            print("⚠️ Audio session deactivation failed: \(error.localizedDescription)")
         }
     }
 
@@ -103,6 +118,12 @@ class AudioManager: NSObject, ObservableObject {
             return
         }
 
+        // v3.1: Activate audio session only when starting to record
+        guard activateAudioSession() else {
+            print("❌ Cannot record: audio session activation failed")
+            return
+        }
+
         // Create unique file URL for this session
         let fileName = "audio_\(sessionId).m4a"
         let tempDir = FileManager.default.temporaryDirectory
@@ -142,6 +163,9 @@ class AudioManager: NSObject, ObservableObject {
         recorder.stop()
         isRecording = false
         stopDurationTimer()
+
+        // v3.1: Deactivate audio session to release it for other apps
+        deactivateAudioSession()
 
         let url = currentRecordingURL
         print("🎤 Audio recording stopped. Duration: \(String(format: "%.1f", recordingDuration))s")
