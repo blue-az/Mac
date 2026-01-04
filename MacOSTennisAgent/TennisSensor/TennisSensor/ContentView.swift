@@ -29,7 +29,7 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .foregroundStyle(.green)
 
-                    Text("TT v3.1")
+                    Text("TT v3.2")
                         .font(.title)
                         .fontWeight(.bold)
                 }
@@ -179,26 +179,44 @@ struct ContentView: View {
                     }
 
                     // HTTP Server for Linux Download
-                    Button(action: {
-                        toggleHTTPServer()
-                    }) {
-                        HStack {
-                            Image(systemName: httpServerRunning ? "stop.circle" : "arrow.down.circle")
-                            Text(httpServerRunning ? "Stop Server" : "Start HTTP Server")
+                    HStack(spacing: 8) {
+                        Button(action: {
+                            toggleHTTPServer()
+                        }) {
+                            HStack {
+                                Image(systemName: httpServerRunning ? "stop.circle" : "arrow.down.circle")
+                                Text(httpServerRunning ? "Stop" : "HTTP Server")
+                            }
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(httpServerRunning ? Color.orange : Color.purple)
+                            .cornerRadius(10)
                         }
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(httpServerRunning ? Color.orange : Color.purple)
-                        .cornerRadius(10)
+
+                        // v3.2: Refresh button to restart server with fresh IP
+                        if httpServerRunning {
+                            Button(action: {
+                                refreshHTTPServer()
+                            }) {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                    .frame(width: 50)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .cornerRadius(10)
+                            }
+                        }
                     }
 
                     if httpServerRunning {
-                        Text("Download at: \(httpServerURL)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        Text(httpServerURL)
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundStyle(.primary)
                             .padding(.horizontal)
+                            .textSelection(.enabled)
                     }
                 }
                 .padding(.horizontal)
@@ -298,6 +316,22 @@ struct ContentView: View {
             httpServerURL = ""
         } else {
             // Start server
+            let dbURL = LocalDatabase.shared.getDatabaseURL()
+            if let url = HTTPFileServer.shared.start(fileURL: dbURL) {
+                httpServerRunning = true
+                httpServerURL = url
+            }
+        }
+    }
+
+    // v3.2: Refresh HTTP server to get fresh IP
+    private func refreshHTTPServer() {
+        HTTPFileServer.shared.stop()
+        httpServerRunning = false
+        httpServerURL = ""
+
+        // Brief delay then restart
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             let dbURL = LocalDatabase.shared.getDatabaseURL()
             if let url = HTTPFileServer.shared.start(fileURL: dbURL) {
                 httpServerRunning = true

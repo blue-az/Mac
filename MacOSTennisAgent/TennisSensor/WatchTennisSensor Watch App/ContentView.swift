@@ -27,7 +27,7 @@ struct ContentView: View {
                     .font(.system(size: 20))
                     .foregroundStyle(motionManager.isRecording ? .green : .gray)
 
-                Text("TT v3.1")
+                Text("TT v3.2")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
             }
@@ -120,24 +120,24 @@ struct ContentView: View {
                     }
                 }
 
-                // Reset Button (appears after session completes)
+                // Reset Button (appears after session completes) - v3.2: same size as Start/Stop
                 if showingSessionComplete && !motionManager.isRecording {
                     Button(action: {
                         resetSession()
                     }) {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.counterclockwise")
-                                .font(.system(size: 16))
+                                .font(.system(size: 22))
 
                             Text("Reset")
-                                .font(.system(size: 12))
-                                .fontWeight(.medium)
+                                .font(.system(size: 13))
+                                .fontWeight(.bold)
                         }
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 10)
                         .background(Color.blue)
-                        .cornerRadius(8)
+                        .cornerRadius(10)
                     }
                     .buttonStyle(.plain)
                 }
