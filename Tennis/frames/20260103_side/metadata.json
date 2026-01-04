@@ -32,5 +32,11 @@
     "forehand": 63,
     "backhand": 32,
     "serve": 0
+  },
+
+  "clip_settings": {
+    "forehand": {"pre_frames": 8, "post_frames": 2, "example_contact": 100},
+    "backhand": {"pre_frames": 5, "post_frames": 5, "example_contact": 230},
+    "notes": "Tuned manually on 2026-01-04. Pre=before contact, post=after."
   }
 }

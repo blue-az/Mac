@@ -32,5 +32,10 @@
     "forehand": 23,
     "backhand": 80,
     "serve": 47
+  },
+
+  "clip_settings": {
+    "serve": {"pre_frames": 5, "post_frames": 19, "example_contact": 455},
+    "notes": "Tuned manually on 2026-01-04. Serve needs longer clip for full toss-to-finish motion."
   }
 }
