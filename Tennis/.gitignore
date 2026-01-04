@@ -11,6 +11,8 @@ datasets/
 !frames/**/manifest.csv
 !frames/**/watch_imu.csv
 !frames/**/watch_shots.csv
+!frames/**/poses.csv
+!frames/**/pose_metrics.csv
 
 # Python
 __pycache__/
