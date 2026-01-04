@@ -83,3 +83,32 @@ model.eval()
 ```bash
 ffmpeg -i video.MOV -vf "fps=5" -q:v 2 frames/frame_%05d.jpg
 ```
+
+## USB Transfer to Desktop
+
+Desktop (RTX 3090) needs frames to generate full Sprint 16 artifacts.
+
+### On Mac
+```bash
+# Prep USB with frames, videos, and Zepp database
+python prep_usb.py /Volumes/YOUR_USB_NAME
+```
+
+### On Desktop
+```bash
+# Copy from USB
+cp -r /run/media/blueaz/USB_NAME/Tennis_Transfer/* ~/Tennis/
+
+# Generate missing artifacts (confusion matrix, embeddings, predictions)
+cd ~/Python/project-phoenix/domains/TennisAgent/cockpit_poc/agent
+python generate_artifacts.py ~/Tennis/frames/20260103_side/
+```
+
+### What Goes Where
+
+| Machine | Role | Data |
+|---------|------|------|
+| **Mac** | Collection | Videos, frame extraction, AW app dev |
+| **Desktop** | Analysis | Training (3090), Sprint 16 tools, artifacts |
+| **Git** | Sync | Small artifacts (<10MB), code, labels |
+| **USB** | Transfer | Frames, videos, databases (big files) |
