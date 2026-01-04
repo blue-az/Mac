@@ -1,0 +1,47 @@
+{
+  "sessions": [
+    {
+      "date": "20260103",
+      "zepp_swings": 50,
+      "stroke_counts": {"forehand": 18, "backhand": 23, "serve": 9},
+      "videos": [
+        {
+          "filename": "zepp_session_20260103_side_20strokes.MOV",
+          "view": "side",
+          "duration_sec": 62,
+          "frames": 312,
+          "swings_captured": 19
+        },
+        {
+          "filename": "zepp_session_20260103_back_30strokes.MOV",
+          "view": "back",
+          "duration_sec": 165,
+          "frames": 827,
+          "swings_captured": 30
+        }
+      ],
+      "model": {
+        "filename": "stroke_classifier_20260103_v2.pth",
+        "architecture": "mobilenetv3_small_100",
+        "classes": ["backhand", "forehand", "serve"],
+        "input_size": 224,
+        "accuracy": 0.875
+      },
+      "notes": "First labeled session. Frames are post-contact (~200ms after Zepp timestamp)."
+    }
+  ],
+
+  "zepp_database": {
+    "path_on_avant": "/data/data/com.zepp.ztennis/databases/ztennis.db",
+    "total_swings": 19543,
+    "size_mb": 208
+  },
+
+  "workflow": {
+    "1_extract_frames": "ffmpeg -i video.MOV -vf 'fps=5' -q:v 2 frames/frame_%04d.jpg",
+    "2_label_frames": "Use zepp timestamps + manual sync offset",
+    "3_rebuild_dataset": "python rebuild_dataset.py <date>",
+    "4_train": "python train.py (on Desktop with GPU)",
+    "5_inference": "python inference.py <frames_dir>"
+  }
+}
