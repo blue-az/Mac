@@ -26,7 +26,7 @@ struct ContentView: View {
                     .font(.system(size: 20))
                     .foregroundStyle(motionManager.isRecording ? .green : .gray)
 
-                Text("TT v2.7.12")
+                Text("TT v3")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
             }
@@ -69,6 +69,21 @@ struct ContentView: View {
             }
 
             Spacer()
+
+            // Audio Toggle - moved above buttons for visibility on small screens
+            HStack(spacing: 6) {
+                Image(systemName: settings.isAudioEnabled ? "mic.fill" : "mic.slash")
+                    .font(.system(size: 12))
+                    .foregroundStyle(settings.isAudioEnabled ? .orange : .gray)
+
+                Toggle("", isOn: $settings.isAudioEnabled)
+                    .labelsHidden()
+                    .tint(.orange)
+
+                Text(settings.isAudioEnabled ? "Audio On" : "Audio Off")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            }
 
             // Buttons
             VStack(spacing: 8) {
@@ -125,21 +140,6 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
                 }
-            }
-
-            // Audio Toggle
-            HStack(spacing: 6) {
-                Image(systemName: settings.isAudioEnabled ? "mic.fill" : "mic.slash")
-                    .font(.system(size: 12))
-                    .foregroundStyle(settings.isAudioEnabled ? .orange : .gray)
-
-                Toggle("", isOn: $settings.isAudioEnabled)
-                    .labelsHidden()
-                    .tint(.orange)
-
-                Text(settings.isAudioEnabled ? "Audio On" : "Audio Off")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.secondary)
             }
 
             // WC Status
