@@ -1,5 +1,6 @@
 # Large files - desktop can access directly or regenerate
 data/ztennis.db
+data/tennis_watch.db
 frames/**/*.jpg
 frames/**/*.png
 datasets/
@@ -8,6 +9,8 @@ datasets/
 !frames/**/labels.csv
 !frames/**/metadata.json
 !frames/**/manifest.csv
+!frames/**/watch_imu.csv
+!frames/**/watch_shots.csv
 
 # Python
 __pycache__/

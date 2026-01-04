@@ -27,9 +27,22 @@
         "input_size": 224,
         "accuracy": 0.875
       },
-      "notes": "First labeled session. Frames are post-contact (~200ms after Zepp timestamp)."
+      "notes": "First labeled session. Frames are post-contact (~200ms after Zepp timestamp).",
+      "watch_session": {
+        "session_id": "watch_20260103_172231",
+        "start_epoch": 1767488025,
+        "shots_detected": 0,
+        "notes": "Short test session, no swings detected. Main Zepp session was later (19:29)."
+      }
     }
   ],
+
+  "watch_database": {
+    "path": "data/tennis_watch.db",
+    "source": "iPhone TennisSensor app via HTTP export",
+    "tables": ["sessions", "shots", "raw_sensor_buffer", "calculated_metrics"],
+    "sample_rate_hz": 100
+  },
 
   "zepp_database": {
     "path_on_avant": "/data/data/com.zepp.ztennis/databases/ztennis.db",
