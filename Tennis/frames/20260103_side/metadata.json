@@ -1,0 +1,36 @@
+{
+  "video_file": "zepp_session_20260103_side_20strokes.MOV",
+  "source": "iPhone",
+  "fps": 5,
+  "frame_interval_ms": 200,
+  "total_frames": 312,
+  "duration_sec": 62.4,
+  
+  "sync": {
+    "method": "manual_visual",
+    "video_start_epoch_ms": 1767493746200,
+    "first_zepp_swing_epoch_ms": 1767493766000,
+    "offset_ms": -19800,
+    "notes": "Frame 100 = first Zepp swing. Frames show POST-CONTACT (ball visible leaving racket)."
+  },
+  
+  "timing_adjustments": {
+    "pre_contact_offset_ms": -400,
+    "at_contact_offset_ms": -200,
+    "post_contact_offset_ms": 0,
+    "current": "post_contact"
+  },
+  
+  "labeling": {
+    "window_ms": 500,
+    "labeled_frames": 95,
+    "background_frames": 217,
+    "zepp_swings": 20
+  },
+  
+  "stroke_counts": {
+    "forehand": 63,
+    "backhand": 32,
+    "serve": 0
+  }
+}

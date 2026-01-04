@@ -1,0 +1,15 @@
+# Large files - desktop can access directly or regenerate
+data/ztennis.db
+frames/**/*.jpg
+frames/**/*.png
+datasets/
+
+# Keep labels and metadata
+!frames/**/labels.csv
+!frames/**/metadata.json
+!frames/**/manifest.csv
+
+# Python
+__pycache__/
+*.pyc
+venv/

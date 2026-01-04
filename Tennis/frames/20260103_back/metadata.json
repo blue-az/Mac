@@ -1,0 +1,36 @@
+{
+  "video_file": "zepp_session_20260103_back_30strokes.MOV",
+  "source": "iPhone",
+  "fps": 5,
+  "frame_interval_ms": 200,
+  "total_frames": 827,
+  "duration_sec": 165.4,
+  
+  "sync": {
+    "method": "manual_visual",
+    "video_start_epoch_ms": 1767494044200,
+    "first_zepp_swing_epoch_ms": 1767494064000,
+    "offset_ms": -19800,
+    "notes": "Same offset as side view (assumed). Frames show POST-CONTACT."
+  },
+  
+  "timing_adjustments": {
+    "pre_contact_offset_ms": -400,
+    "at_contact_offset_ms": -200,
+    "post_contact_offset_ms": 0,
+    "current": "post_contact"
+  },
+  
+  "labeling": {
+    "window_ms": 500,
+    "labeled_frames": 150,
+    "background_frames": 677,
+    "zepp_swings": 30
+  },
+  
+  "stroke_counts": {
+    "forehand": 23,
+    "backhand": 80,
+    "serve": 47
+  }
+}
