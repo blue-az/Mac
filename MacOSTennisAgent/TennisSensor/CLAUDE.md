@@ -48,6 +48,21 @@ Deprecated WebSocket backend and HTTP server. New workflow:
 
 **Impact:** Minor - data capture works perfectly once warmed up
 
+### Known Issue: Session State Carryover (Medium)
+
+**Symptom:** Watch app fails to record new session if previous session wasn't fully cleared
+
+**Observed:** 60-swing Zepp session at 7:08 PM had zero Watch data - app didn't initialize
+
+**Workaround:** Use Reset button after each session; if issues persist, force-quit Watch app before new session
+
+**Root Cause (TODO for v3.4):**
+- Previous session state may block new session initialization
+- WatchConnectivity `transferUserInfo` queue may need clearing
+- Potential fix: Add explicit session cleanup on app launch and before new session start
+
+**Impact:** Medium - can cause complete data loss for a session
+
 ### Quick Reference: USB Data Pull Commands
 
 **Prerequisites:**
