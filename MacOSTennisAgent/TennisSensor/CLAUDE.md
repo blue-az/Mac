@@ -1,6 +1,52 @@
 # 🎾 MacOSTennisAgent - Claude Session Status
-**Last Updated:** November 18, 2025
-**Status:** ✅ **v2.7.8 READY** - Proper gzip compression with headers and CRC32 verification
+**Last Updated:** January 4, 2026
+**Status:** ✅ **v3.3 READY** - USB-only mode with reliable batch transfer
+
+---
+
+## 🔧 v3.3 - CRITICAL FIX: Watch Data Loss + USB Mode - January 4, 2026
+
+### Critical Bug Fix: updateApplicationContext → transferUserInfo
+
+**Problem in v3.2 and earlier:**
+- Watch sent incremental batches via `updateApplicationContext`
+- `updateApplicationContext` **OVERWRITES** previous context
+- Only the LAST 1-2 batches survived - losing 95%+ of session data
+- Example: 262 samples captured instead of 6000+
+
+**v3.3 Solution:**
+- Changed to `transferUserInfo` which **QUEUES** all messages
+- All batches now delivered reliably in order
+- Test result: 6313 samples captured (vs 262 before)
+
+**Files Changed:**
+- `MotionManager.swift` - Both `sendIncrementalBatchToPhone()` and `sendCompleteSessionToPhone()` now use `transferUserInfo`
+- `BackendClient.swift` - Added `incremental_batch` handling in `didReceiveUserInfo`
+
+### Simplified to USB-Only Mode
+
+Deprecated WebSocket backend and HTTP server. New workflow:
+1. Watch records session → transfers to iPhone via WatchConnectivity
+2. iPhone stores in local SQLite (`tennis_watch.db`)
+3. Mac pulls via USB: `pymobiledevice3 apps pull com.ef.TennisSensor Documents/`
+
+**Removed from iPhone app:**
+- WebSocket backend connection
+- HTTP server functionality
+- Connect/Disconnect buttons
+
+### Known Issue: Startup Delay (Minor)
+
+**Symptom:** First 10-15 seconds of Watch recording may not capture swings reliably
+
+**Workaround:** Start Watch app 10-15 seconds before beginning to hit
+
+**Root Cause (TODO for v3.4):**
+- 0.5s delay between WorkoutManager and MotionManager start
+- WatchConnectivity may need warmup for first `transferUserInfo`
+- Potential fix: Add ready indicator or extend initialization
+
+**Impact:** Minor - data capture works perfectly once warmed up
 
 ---
 
