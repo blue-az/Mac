@@ -172,13 +172,12 @@ class MotionManager: NSObject, ObservableObject {
             "is_final": false
         ]
 
-        do {
-            try session.updateApplicationContext(batchMessage)
-            lastSentCount = sampleCount
-            print("📤 Sent incremental batch: \(samplesData.count) samples (total: \(sampleCount))")
-        } catch {
-            print("❌ updateApplicationContext failed: \(error.localizedDescription)")
-        }
+        // v3.3: Use transferUserInfo instead of updateApplicationContext
+        // updateApplicationContext OVERWRITES previous context - only last batch survives!
+        // transferUserInfo QUEUES messages - all batches delivered in order
+        session.transferUserInfo(batchMessage)
+        lastSentCount = sampleCount
+        print("📤 Sent incremental batch: \(samplesData.count) samples (total: \(sampleCount))")
     }
 
     private func sendCompleteSessionToPhone() {
@@ -230,14 +229,10 @@ class MotionManager: NSObject, ObservableObject {
                    log: logger, type: .info,
                    sessionId, samplesData.count, sampleCount, sessionDuration)
 
-            do {
-                try session.updateApplicationContext(finalBatchMessage)
-                print("✅ updateApplicationContext called successfully")
-                os_log("✅ updateApplicationContext called successfully", log: logger, type: .info)
-            } catch {
-                print("❌ updateApplicationContext failed: \(error.localizedDescription)")
-                os_log("❌ updateApplicationContext failed: %{public}@", log: logger, type: .error, error.localizedDescription)
-            }
+            // v3.3: Use transferUserInfo for reliable delivery
+            session.transferUserInfo(finalBatchMessage)
+            print("✅ transferUserInfo called successfully (final batch)")
+            os_log("✅ transferUserInfo called successfully (final batch)", log: logger, type: .info)
         } else {
             print("✅ All samples already sent incrementally")
         }

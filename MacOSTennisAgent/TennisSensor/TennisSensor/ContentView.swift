@@ -2,8 +2,8 @@
 //  ContentView.swift
 //  TennisSensor
 //
-//  Created by wikiwoo on 4/30/25.
-//  Updated for MacOSTennisAgent integration
+//  v3.3 - Simplified for USB-only workflow
+//  Data stored locally, pulled via pymobiledevice3
 //
 
 import SwiftUI
@@ -11,66 +11,51 @@ import WatchConnectivity
 
 struct ContentView: View {
     @EnvironmentObject var backendClient: BackendClient
-    @State private var showConnectionAlert = false
     @State private var wcSessionActivated = false
     @State private var watchReachable = false
-    @State private var showingExportSheet = false
-    @State private var httpServerRunning = false
-    @State private var httpServerURL = ""
     @State private var dbStats = (sessions: 0, samples: 0, sizeBytes: 0)
     @State private var showingClearDatabaseAlert = false
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 30) {
+            VStack(spacing: 20) {
                 // Header
                 VStack(spacing: 10) {
                     Image(systemName: "tennisball.fill")
                         .font(.system(size: 60))
                         .foregroundStyle(.green)
 
-                    Text("TT v3.2")
+                    Text("TT v3.3")
                         .font(.title)
                         .fontWeight(.bold)
+
+                    Text("USB Transfer Mode")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .padding(.top, 10)
+                .padding(.top, 20)
 
                 Spacer()
 
-                // Connection Status
+                // WatchConnectivity Status
                 VStack(spacing: 15) {
-                    HStack {
-                        Circle()
-                            .fill(backendClient.isConnected ? Color.green : Color.red)
-                            .frame(width: 12, height: 12)
-
-                        Text(backendClient.connectionStatus)
-                            .font(.headline)
-                    }
-
-                    Text("Backend: ws://192.168.8.185:8000/ws")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    // WatchConnectivity Status
                     HStack(spacing: 15) {
                         HStack(spacing: 4) {
                             Circle()
                                 .fill(wcSessionActivated ? Color.green : Color.red)
-                                .frame(width: 8, height: 8)
+                                .frame(width: 10, height: 10)
                             Text(wcSessionActivated ? "WC Active" : "WC Inactive")
-                                .font(.caption2)
+                                .font(.subheadline)
                         }
 
                         HStack(spacing: 4) {
                             Circle()
                                 .fill(watchReachable ? Color.green : Color.orange)
-                                .frame(width: 8, height: 8)
-                            Text(watchReachable ? "Watch Reachable" : "Watch Not Reachable")
-                                .font(.caption2)
+                                .frame(width: 10, height: 10)
+                            Text(watchReachable ? "Watch Connected" : "Watch Not Reachable")
+                                .font(.subheadline)
                         }
                     }
-                    .foregroundStyle(.secondary)
                 }
                 .padding()
                 .background(
@@ -79,27 +64,27 @@ struct ContentView: View {
                 )
                 .padding(.horizontal)
 
-                Spacer()
-
                 // Instructions
                 VStack(alignment: .leading, spacing: 10) {
-                    Label("Instructions:", systemImage: "info.circle")
+                    Label("Workflow:", systemImage: "info.circle")
                         .font(.headline)
 
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(alignment: .top) {
                             Text("1.")
-                            Text("Open the Watch app on your Apple Watch")
+                            Text("Record session on Watch")
                         }
-
                         HStack(alignment: .top) {
                             Text("2.")
-                            Text("Tap 'Start Session' to begin recording")
+                            Text("Data syncs to this iPhone automatically")
                         }
-
                         HStack(alignment: .top) {
                             Text("3.")
-                            Text("Sensor data will be collected")
+                            Text("Connect iPhone to Mac via USB")
+                        }
+                        HStack(alignment: .top) {
+                            Text("4.")
+                            Text("Pull data with pymobiledevice3")
                         }
                     }
                     .font(.subheadline)
@@ -114,7 +99,7 @@ struct ContentView: View {
 
                 Spacer()
 
-                // v2.7: Local Database Stats
+                // Local Database Stats
                 VStack(spacing: 8) {
                     HStack {
                         Image(systemName: "cylinder.fill")
@@ -143,121 +128,36 @@ struct ContentView: View {
                 .onAppear {
                     updateDatabaseStats()
                 }
-
-                // v2.7: Export Buttons
-                VStack(spacing: 12) {
-                    // Export to Files App
-                    Button(action: {
-                        exportDatabase()
-                    }) {
-                        HStack {
-                            Image(systemName: "square.and.arrow.up")
-                            Text("Export Database")
-                        }
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .cornerRadius(10)
-                    }
-
-                    // Clear Database Button (v2.7.4)
-                    Button(action: {
-                        showingClearDatabaseAlert = true
-                    }) {
-                        HStack {
-                            Image(systemName: "trash.fill")
-                            Text("Clear Database")
-                        }
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.red)
-                        .cornerRadius(10)
-                    }
-
-                    // HTTP Server for Linux Download
-                    HStack(spacing: 8) {
-                        Button(action: {
-                            toggleHTTPServer()
-                        }) {
-                            HStack {
-                                Image(systemName: httpServerRunning ? "stop.circle" : "arrow.down.circle")
-                                Text(httpServerRunning ? "Stop" : "HTTP Server")
-                            }
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(httpServerRunning ? Color.orange : Color.purple)
-                            .cornerRadius(10)
-                        }
-
-                        // v3.2: Refresh button to restart server with fresh IP
-                        if httpServerRunning {
-                            Button(action: {
-                                refreshHTTPServer()
-                            }) {
-                                Image(systemName: "arrow.clockwise")
-                                    .font(.headline)
-                                    .foregroundStyle(.white)
-                                    .frame(width: 50)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .cornerRadius(10)
-                            }
-                        }
-                    }
-
-                    if httpServerRunning {
-                        Text(httpServerURL)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(.primary)
-                            .padding(.horizontal)
-                            .textSelection(.enabled)
-                    }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    updateDatabaseStats()
                 }
-                .padding(.horizontal)
 
-                // Connect/Disconnect Button
+                // Clear Database Button
                 Button(action: {
-                    if backendClient.isConnected {
-                        backendClient.disconnect()
-                    } else {
-                        backendClient.connect()
-                    }
+                    showingClearDatabaseAlert = true
                 }) {
-                    Text(backendClient.isConnected ? "Disconnect" : "🔌 Connect Backend")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(backendClient.isConnected ? Color.red : Color.blue)
-                        .cornerRadius(10)
+                    HStack {
+                        Image(systemName: "trash.fill")
+                        Text("Clear Database")
+                    }
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.red)
+                    .cornerRadius(10)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 30)
             }
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                // Auto-connect on appear
-                backendClient.connect()
-                // Check WatchConnectivity status
                 checkWCSession()
                 // Periodically update Watch reachability
                 Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
                     checkWCSession()
+                    updateDatabaseStats()
                 }
-            }
-            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("SwingDetected"))) { notification in
-                // Haptic feedback when swing detected
-                let generator = UINotificationFeedbackGenerator()
-                generator.notificationOccurred(.success)
-
-                // Show alert (optional)
-                showConnectionAlert = true
             }
             .alert("Clear Database?", isPresented: $showingClearDatabaseAlert) {
                 Button("Cancel", role: .cancel) { }
@@ -277,8 +177,6 @@ struct ContentView: View {
         }
     }
 
-    // v2.7: Database Management
-
     private func updateDatabaseStats() {
         dbStats = LocalDatabase.shared.getDatabaseStats()
     }
@@ -290,64 +188,10 @@ struct ContentView: View {
         return formatter.string(fromByteCount: Int64(bytes))
     }
 
-    private func exportDatabase() {
-        let dbURL = LocalDatabase.shared.getDatabaseURL()
-        let activityVC = UIActivityViewController(
-            activityItems: [dbURL],
-            applicationActivities: nil
-        )
-
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootVC = windowScene.windows.first?.rootViewController {
-            rootVC.present(activityVC, animated: true)
-        }
-
-        // Update stats after export
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            updateDatabaseStats()
-        }
-    }
-
-    private func toggleHTTPServer() {
-        if httpServerRunning {
-            // Stop server
-            HTTPFileServer.shared.stop()
-            httpServerRunning = false
-            httpServerURL = ""
-        } else {
-            // Start server
-            let dbURL = LocalDatabase.shared.getDatabaseURL()
-            if let url = HTTPFileServer.shared.start(fileURL: dbURL) {
-                httpServerRunning = true
-                httpServerURL = url
-            }
-        }
-    }
-
-    // v3.2: Refresh HTTP server to get fresh IP
-    private func refreshHTTPServer() {
-        HTTPFileServer.shared.stop()
-        httpServerRunning = false
-        httpServerURL = ""
-
-        // Brief delay then restart
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            let dbURL = LocalDatabase.shared.getDatabaseURL()
-            if let url = HTTPFileServer.shared.start(fileURL: dbURL) {
-                httpServerRunning = true
-                httpServerURL = url
-            }
-        }
-    }
-
     private func clearDatabase() {
-        // Clear all data from local database
         LocalDatabase.shared.clearAllData()
-
-        // Update stats to show empty database
         updateDatabaseStats()
 
-        // Haptic feedback
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
 
