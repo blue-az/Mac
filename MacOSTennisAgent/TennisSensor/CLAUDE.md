@@ -48,6 +48,71 @@ Deprecated WebSocket backend and HTTP server. New workflow:
 
 **Impact:** Minor - data capture works perfectly once warmed up
 
+### Quick Reference: USB Data Pull Commands
+
+**Prerequisites:**
+```bash
+pip install pymobiledevice3  # iPhone access
+# Android: adb with root access for Zepp
+```
+
+**Pull Watch data (iPhone connected via USB):**
+```bash
+# Database + audio
+pymobiledevice3 apps pull com.ef.TennisSensor Documents/ /tmp/tennis_docs/
+
+# Just database
+pymobiledevice3 apps pull com.ef.TennisSensor Documents/tennis_watch.db /tmp/watch.db
+
+# Check sessions
+sqlite3 /tmp/watch.db "SELECT session_id, datetime(start_time, 'unixepoch', 'localtime'),
+  (SELECT SUM(sample_count) FROM raw_sensor_buffer WHERE session_id = s.session_id)
+  FROM sessions s ORDER BY start_time DESC LIMIT 5;"
+```
+
+**Pull Zepp data (Android connected via USB):**
+```bash
+adb shell "su -c 'cp /data/data/com.zepp.ztennis/databases/ztennis.db /sdcard/ztennis.db'"
+adb pull /sdcard/ztennis.db /tmp/zepp.db
+
+# Check swings
+sqlite3 /tmp/zepp.db "SELECT datetime(client_created/1000, 'unixepoch', 'localtime'),
+  swing_type, racket_speed FROM swings ORDER BY client_created DESC LIMIT 10;"
+```
+
+**Pull video (iPhone camera roll):**
+```bash
+# List recent videos
+pymobiledevice3 afc ls DCIM/100APPLE/ | grep -i mov | tail -5
+
+# Pull specific video
+pymobiledevice3 afc pull -i DCIM/100APPLE/IMG_XXXX.MOV /tmp/video.MOV
+```
+
+**Audio transcription (requires whisper-cpp):**
+```bash
+python3 ~/Python/Mac/Tennis/transcribe_audio.py /tmp/audio.m4a -o /tmp/
+```
+
+### Database Schema Reference
+
+**Watch: tennis_watch.db**
+- `sessions`: session_id, device, start_time, end_time
+- `raw_sensor_buffer`: buffer_id, session_id, sample_count, compressed_data (gzip CSV)
+
+**Zepp: ztennis.db**
+- `swings`: client_created (epoch ms), swing_type (1=FH, 2=BH, 3=Serve), racket_speed
+
+### Validated Multi-Source Workflow (Jan 4, 2026)
+
+Tested end-to-end with announced shot session:
+1. **Zepp** → swing timestamps + type + speed ✅
+2. **Watch Audio** → shot announcements via Whisper ✅
+3. **Watch IMU** → 100Hz motion data (v3.3 fix) ✅
+4. **Video** → frame extraction for pose analysis ✅
+
+All sources align within 3-6 second offset (announcement precedes swing).
+
 ---
 
 ## 🔧 v2.7.8 - PROPER GZIP IMPLEMENTATION - November 18, 2025
