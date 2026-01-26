@@ -18,6 +18,10 @@ struct ContentView: View {
     @State private var wcSessionActivated = false
     @State private var showingSessionComplete = false
     @State private var currentSessionId: String?  // v3.1: Store session ID for audio
+    @State private var lastStopTime: Date?
+    @State private var audioSegmentIndex = 1
+
+    private let resumeWindow: TimeInterval = 5 * 60
 
     var body: some View {
         VStack(spacing: 12) {
@@ -173,8 +177,24 @@ struct ContentView: View {
     private func startSession() {
         print("🎾 Starting tennis session...")
 
+        let now = Date()
+        var isResuming = false
+
+        if let lastStopTime = lastStopTime,
+           let _ = currentSessionId,
+           now.timeIntervalSince(lastStopTime) <= resumeWindow {
+            isResuming = true
+        } else {
+            currentSessionId = nil
+        }
+
         // v3.1: Generate session ID once and store it for consistent use
-        currentSessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: Date()))"
+        if currentSessionId == nil {
+            currentSessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: now))"
+            audioSegmentIndex = 1
+        } else if isResuming {
+            audioSegmentIndex += 1
+        }
 
         // v2.6: Start workout session FIRST to prevent screen sleep
         workoutManager.startWorkout()
@@ -182,11 +202,13 @@ struct ContentView: View {
         // Wait briefly for workout to initialize, then start motion recording
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             motionManager.workoutSessionActive = workoutManager.isWorkoutActive
-            motionManager.startSession()
+            if let sessionId = currentSessionId {
+                motionManager.startSession(sessionId: sessionId)
+            }
 
             // v3.1: Start audio recording if enabled, using stored session ID
             if settings.isAudioEnabled, let sessionId = currentSessionId {
-                audioManager.startRecording(sessionId: sessionId)
+                audioManager.startRecording(sessionId: sessionId, segmentIndex: audioSegmentIndex)
             }
         }
 
@@ -199,11 +221,12 @@ struct ContentView: View {
 
         // v2.6: Stop motion recording first
         motionManager.stopSession()
+        lastStopTime = Date()
 
         // v3.1: Stop audio recording and transfer file using stored session ID
         if audioManager.isRecording, let sessionId = currentSessionId {
             if let _ = audioManager.stopRecording() {
-                audioManager.transferAudioFile(sessionId: sessionId)
+                audioManager.transferAudioFile(sessionId: sessionId, segmentIndex: audioSegmentIndex)
             }
         }
 
@@ -219,6 +242,9 @@ struct ContentView: View {
 
         // Clear the session complete flag to return to home screen
         showingSessionComplete = false
+        currentSessionId = nil
+        lastStopTime = nil
+        audioSegmentIndex = 1
 
         // Cleanup any audio files
         audioManager.cleanupRecording()

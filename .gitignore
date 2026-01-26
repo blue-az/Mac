@@ -20,3 +20,9 @@ imports/*.FIT
 
 # OS
 .DS_Store
+
+# Xcode user data
+MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj/xcuserdata/
+
+# Local data artifacts
+Tennis/60shot_session/

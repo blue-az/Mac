@@ -161,13 +161,16 @@ extension BackendClient: WCSessionDelegate {
         }
 
         let duration = metadata["duration"] as? Double ?? 0
+        let segmentIndex = metadata["segment_index"] as? Int ?? 1
         let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let audioDir = documentsDir.appendingPathComponent("audio")
 
         do {
             try FileManager.default.createDirectory(at: audioDir, withIntermediateDirectories: true)
 
-            let fileName = "audio_\(sessionId).m4a"
+            let fileName = segmentIndex > 1
+                ? "audio_\(sessionId)_part\(segmentIndex).m4a"
+                : "audio_\(sessionId).m4a"
             let destinationURL = audioDir.appendingPathComponent(fileName)
 
             try? FileManager.default.removeItem(at: destinationURL)

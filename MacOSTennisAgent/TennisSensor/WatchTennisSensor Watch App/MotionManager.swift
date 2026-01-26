@@ -18,6 +18,7 @@ class MotionManager: NSObject, ObservableObject {
     @Published var sessionDuration: TimeInterval = 0
     @Published var workoutSessionActive = false
 
+    private var activeSessionId: String?
     private var sessionStartTime: Date?
     private var sampleBuffer: [SensorSample] = []
     private var lastSentCount = 0
@@ -38,7 +39,7 @@ class MotionManager: NSObject, ObservableObject {
 
     // MARK: - Session Control
 
-    func startSession() {
+    func startSession(sessionId: String) {
         guard !isRecording else { return }
 
         print("🎾 Starting motion capture session...")
@@ -56,6 +57,7 @@ class MotionManager: NSObject, ObservableObject {
         lastSentCount = 0
         sampleBuffer.removeAll()
         sessionStartTime = Date()
+        activeSessionId = sessionId
         lastSampleTime = 0  // v2.7: Reset throttling
         isRecording = true
 
@@ -155,11 +157,13 @@ class MotionManager: NSObject, ObservableObject {
             return
         }
 
+        print("📬 Pending userInfo transfers: \(session.outstandingUserInfoTransfers.count)")
+
         // Get new samples since last send
         let newSamples = Array(sampleBuffer[lastSentCount..<sampleBuffer.count])
         guard !newSamples.isEmpty else { return }
 
-        let sessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: sessionStartTime ?? Date()))"
+        let sessionId = activeSessionId ?? "watch_\(DateFormatter.sessionIdFormatter.string(from: sessionStartTime ?? Date()))"
         let samplesData = newSamples.map { $0.toDictionary() }
 
         let batchMessage: [String: Any] = [
@@ -193,6 +197,7 @@ class MotionManager: NSObject, ObservableObject {
         print("   isSupported: \(WCSession.isSupported())")
         print("   activationState: \(session.activationState.rawValue)")
         print("   isReachable: \(session.isReachable)")
+        print("   pendingUserInfo: \(session.outstandingUserInfoTransfers.count)")
         os_log("🔍 WCSession Debug: isSupported=%d, activationState=%d, isReachable=%d",
                log: logger, type: .info,
                WCSession.isSupported(), session.activationState.rawValue, session.isReachable)
@@ -205,7 +210,7 @@ class MotionManager: NSObject, ObservableObject {
 
         // Get any remaining unsent samples
         let newSamples = Array(sampleBuffer[lastSentCount..<sampleBuffer.count])
-        let sessionId = "watch_\(DateFormatter.sessionIdFormatter.string(from: sessionStartTime ?? Date()))"
+        let sessionId = activeSessionId ?? "watch_\(DateFormatter.sessionIdFormatter.string(from: sessionStartTime ?? Date()))"
 
         if !newSamples.isEmpty {
             let samplesData = newSamples.map { $0.toDictionary() }

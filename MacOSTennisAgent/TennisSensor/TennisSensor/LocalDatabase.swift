@@ -87,7 +87,7 @@ class LocalDatabase {
 
     func insertSession(sessionId: String, device: String, startTime: Int) {
         let sql = """
-        INSERT OR REPLACE INTO sessions (session_id, device, start_time)
+        INSERT OR IGNORE INTO sessions (session_id, device, start_time)
         VALUES (?, ?, ?);
         """
 

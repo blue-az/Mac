@@ -44,6 +44,7 @@ class WatchConnectivityDelegate: NSObject, WCSessionDelegate {
         } else {
             print("✅ WCSession activated: \(activationState.rawValue)")
             os_log("✅ WCSession activated on Watch: state=%d", log: logger, type: .info, activationState.rawValue)
+            print("📬 Pending userInfo transfers: \(session.outstandingUserInfoTransfers.count)")
         }
     }
 

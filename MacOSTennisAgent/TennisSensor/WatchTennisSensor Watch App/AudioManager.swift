@@ -107,12 +107,12 @@ class AudioManager: NSObject, ObservableObject {
 
     // MARK: - Recording Control
 
-    func startRecording(sessionId: String) {
+    func startRecording(sessionId: String, segmentIndex: Int = 1) {
         guard hasPermission else {
             print("❌ Cannot record: no microphone permission")
             requestPermission { [weak self] granted in
                 if granted {
-                    self?.startRecording(sessionId: sessionId)
+                    self?.startRecording(sessionId: sessionId, segmentIndex: segmentIndex)
                 }
             }
             return
@@ -125,7 +125,9 @@ class AudioManager: NSObject, ObservableObject {
         }
 
         // Create unique file URL for this session
-        let fileName = "audio_\(sessionId).m4a"
+        let fileName = segmentIndex > 1
+            ? "audio_\(sessionId)_part\(segmentIndex).m4a"
+            : "audio_\(sessionId).m4a"
         let tempDir = FileManager.default.temporaryDirectory
         currentRecordingURL = tempDir.appendingPathComponent(fileName)
 
@@ -180,7 +182,7 @@ class AudioManager: NSObject, ObservableObject {
 
     // MARK: - File Transfer
 
-    func transferAudioFile(sessionId: String) {
+    func transferAudioFile(sessionId: String, segmentIndex: Int = 1) {
         guard let url = currentRecordingURL,
               FileManager.default.fileExists(atPath: url.path) else {
             print("⚠️ No audio file to transfer")
@@ -196,6 +198,7 @@ class AudioManager: NSObject, ObservableObject {
         let metadata: [String: Any] = [
             "type": "audio_file",
             "session_id": sessionId,
+            "segment_index": segmentIndex,
             "duration": recordingDuration,
             "timestamp": Date().timeIntervalSince1970
         ]
