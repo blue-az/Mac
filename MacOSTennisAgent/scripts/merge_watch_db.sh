@@ -27,18 +27,27 @@ mkdir -p "$backup_dir"
 backup_path="$backup_dir/tennis_watch_$(date +%Y%m%d_%H%M%S).db"
 cp -f "$DEST_DB" "$backup_path"
 
-sqlite3 "$DEST_DB" <<SQL
-ATTACH '$SRC_DB' AS srcdb;
+table_exists() {
+  local db="$1"
+  local table="$2"
+  sqlite3 "$db" "SELECT 1 FROM sqlite_master WHERE type='table' AND name='$table' LIMIT 1;" | grep -q 1
+}
 
--- Insert sessions first, then dependent tables
+sql="ATTACH '$SRC_DB' AS srcdb;
 INSERT OR IGNORE INTO sessions SELECT * FROM srcdb.sessions;
-INSERT OR IGNORE INTO raw_sensor_buffer SELECT * FROM srcdb.raw_sensor_buffer;
-INSERT OR IGNORE INTO shots SELECT * FROM srcdb.shots;
-INSERT OR IGNORE INTO calculated_metrics SELECT * FROM srcdb.calculated_metrics;
-INSERT OR IGNORE INTO devices SELECT * FROM srcdb.devices;
+INSERT OR IGNORE INTO raw_sensor_buffer SELECT * FROM srcdb.raw_sensor_buffer;"
 
-DETACH srcdb;
-SQL
+for table in shots calculated_metrics devices; do
+  if table_exists "$DEST_DB" "$table" && table_exists "$SRC_DB" "$table"; then
+    sql="$sql
+INSERT OR IGNORE INTO $table SELECT * FROM srcdb.$table;"
+  fi
+done
+
+sql="$sql
+DETACH srcdb;"
+
+sqlite3 "$DEST_DB" "$sql"
 
 new_dest_count=$(sqlite3 "$DEST_DB" "SELECT COUNT(*) FROM sessions;")
 
