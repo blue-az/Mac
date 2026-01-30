@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  TennisSensor
 //
-//  v3.3 - Simplified for USB-only workflow
+//  v3.4 - Simplified for USB-only workflow
 //  Data stored locally, pulled via pymobiledevice3
 //
 
@@ -25,7 +25,7 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .foregroundStyle(.green)
 
-                    Text("TT v3.3")
+                    Text("TT v3.4")
                         .font(.title)
                         .fontWeight(.bold)
 

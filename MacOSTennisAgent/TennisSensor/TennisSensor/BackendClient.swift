@@ -2,12 +2,13 @@
 //  BackendClient.swift
 //  TennisSensor
 //
-//  v3.3 - Simplified for USB-only workflow
+//  v3.4 - Simplified for USB-only workflow
 //  Receives data from Watch via WatchConnectivity, stores in local SQLite
 //  Data pulled via pymobiledevice3 when connected to Mac
 //
 
 import Foundation
+import UIKit
 import WatchConnectivity
 import os.log
 
@@ -23,7 +24,7 @@ class BackendClient: NSObject, ObservableObject {
 
     // MARK: - Properties
 
-    @Published var isConnected = false  // Deprecated - always false in v3.3
+    @Published var isConnected = false  // Deprecated - always false in v3.4
     @Published var connectionStatus = "USB Mode"
 
     // Track accumulated samples from incremental batches
@@ -33,13 +34,13 @@ class BackendClient: NSObject, ObservableObject {
     // MARK: - Initialization
 
     private override init() {
-        print("🏗️ BackendClient.init() v3.3 - USB Mode")
+        print("🏗️ BackendClient.init() v3.4 - USB Mode")
         super.init()
 
         // Setup WatchConnectivity
         setupWatchConnectivity()
 
-        NSLog("⚡️ BACKENDCLIENT v3.3 INITIALIZED - USB MODE ⚡️")
+        NSLog("⚡️ BACKENDCLIENT v3.4 INITIALIZED - USB MODE ⚡️")
     }
 
     // MARK: - WatchConnectivity Setup
@@ -60,13 +61,13 @@ class BackendClient: NSObject, ObservableObject {
     // MARK: - Deprecated Methods (kept for compatibility)
 
     func connect() {
-        // Deprecated - no backend connection in v3.3
-        print("⚠️ connect() deprecated in v3.3 - using USB mode")
+        // Deprecated - no backend connection in v3.4
+        print("⚠️ connect() deprecated in v3.4 - using USB mode")
     }
 
     func disconnect() {
-        // Deprecated - no backend connection in v3.3
-        print("⚠️ disconnect() deprecated in v3.3 - using USB mode")
+        // Deprecated - no backend connection in v3.4
+        print("⚠️ disconnect() deprecated in v3.4 - using USB mode")
     }
 
     // MARK: - Local Database Operations
@@ -85,6 +86,7 @@ class BackendClient: NSObject, ObservableObject {
     func startSession(sessionId: String, device: String = "AppleWatch") {
         let startTime = Int(Date().timeIntervalSince1970)
         LocalDatabase.shared.insertSession(sessionId: sessionId, device: device, startTime: startTime)
+        setIdleTimerDisabled(true)
         print("💾 Session started: \(sessionId)")
     }
 
@@ -92,6 +94,12 @@ class BackendClient: NSObject, ObservableObject {
         let endTime = Int(Date().timeIntervalSince1970)
         LocalDatabase.shared.updateSessionEnd(sessionId: sessionId, endTime: endTime, duration: 0)
         print("💾 Session ended: \(sessionId)")
+    }
+
+    private func setIdleTimerDisabled(_ disabled: Bool) {
+        DispatchQueue.main.async {
+            UIApplication.shared.isIdleTimerDisabled = disabled
+        }
     }
 }
 
@@ -121,7 +129,7 @@ extension BackendClient: WCSessionDelegate {
         print("🔄 WCSession reachability: \(session.isReachable)")
     }
 
-    // v3.3: Primary data transfer method - queued, reliable delivery
+    // v3.4: Primary data transfer method - queued, reliable delivery
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
         NSLog("⚡️ didReceiveUserInfo - keys: \(userInfo.keys)")
 
@@ -215,6 +223,9 @@ extension BackendClient: WCSessionDelegate {
         if isFinal {
             endSession(sessionId: sessionId)
             sessionStarted.remove(sessionId)
+            if sessionStarted.isEmpty {
+                setIdleTimerDisabled(false)
+            }
             print("✅ Session complete: \(sessionId) (\(totalSoFar) samples)")
         }
     }

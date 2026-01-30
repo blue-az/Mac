@@ -31,7 +31,7 @@ struct ContentView: View {
                     .font(.system(size: 20))
                     .foregroundStyle(motionManager.isRecording ? .green : .gray)
 
-                Text("TT v3.3")
+                Text("TT v3.4")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
             }

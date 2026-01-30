@@ -1,4 +1,4 @@
-# AGENTS.md - Data Download Procedure (TennisSensor v3.3 USB Mode)
+# AGENTS.md - Data Download Procedure (TennisSensor v3.4 USB Mode)
 
 This repo uses a USB-only workflow in v3.3. Data is stored on the iPhone in
 `Documents/tennis_watch.db` and pulled over USB with `pymobiledevice3`.
