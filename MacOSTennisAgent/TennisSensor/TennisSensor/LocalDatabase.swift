@@ -17,6 +17,12 @@ class LocalDatabase {
 
     private var db: OpaquePointer?
     private let dbPath: String
+    private let dbQueue = DispatchQueue(label: "com.ef.TennisSensor.LocalDatabase")
+    private let sqliteTransient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
+    @discardableResult
+    private func syncOnDBQueue(_ block: () -> Void) -> Void {
+        dbQueue.sync(execute: block)
+    }
 
     // MARK: - Initialization
 
@@ -28,16 +34,23 @@ class LocalDatabase {
         print("📍 Local database path: \(dbPath)")
 
         // Open or create database
-        if sqlite3_open(dbPath, &db) != SQLITE_OK {
-            print("❌ Error opening database")
-        } else {
-            print("✅ Local database opened successfully")
-            createTables()
+        syncOnDBQueue {
+            if sqlite3_open_v2(dbPath, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, nil) != SQLITE_OK {
+                print("❌ Error opening database")
+            } else {
+                sqlite3_busy_timeout(db, 2000)
+                executeSQL("PRAGMA foreign_keys = ON;")
+                executeSQL("PRAGMA journal_mode = DELETE;")
+                print("✅ Local database opened successfully")
+                createTables()
+            }
         }
     }
 
     deinit {
-        sqlite3_close(db)
+        syncOnDBQueue {
+            sqlite3_close(db)
+        }
     }
 
     // MARK: - Database Schema
@@ -77,53 +90,61 @@ class LocalDatabase {
     private func executeSQL(_ sql: String) {
         var errMsg: UnsafeMutablePointer<Int8>?
         if sqlite3_exec(db, sql, nil, nil, &errMsg) != SQLITE_OK {
-            let errorMessage = String(cString: errMsg!)
-            print("❌ SQL Error: \(errorMessage)")
-            sqlite3_free(errMsg)
+            if let errMsg = errMsg {
+                let errorMessage = String(cString: errMsg)
+                print("❌ SQL Error: \(errorMessage)")
+                sqlite3_free(errMsg)
+            } else {
+                print("❌ SQL Error: unknown")
+            }
         }
     }
 
     // MARK: - Session Management
 
     func insertSession(sessionId: String, device: String, startTime: Int) {
-        let sql = """
-        INSERT OR IGNORE INTO sessions (session_id, device, start_time)
-        VALUES (?, ?, ?);
-        """
+        syncOnDBQueue {
+            let sql = """
+            INSERT OR IGNORE INTO sessions (session_id, device, start_time)
+            VALUES (?, ?, ?);
+            """
 
-        var stmt: OpaquePointer?
-        if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
-            sqlite3_bind_text(stmt, 1, (sessionId as NSString).utf8String, -1, nil)
-            sqlite3_bind_text(stmt, 2, (device as NSString).utf8String, -1, nil)
-            sqlite3_bind_int(stmt, 3, Int32(startTime))
+            var stmt: OpaquePointer?
+            if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
+                sqlite3_bind_text(stmt, 1, (sessionId as NSString).utf8String, -1, sqliteTransient)
+                sqlite3_bind_text(stmt, 2, (device as NSString).utf8String, -1, sqliteTransient)
+                sqlite3_bind_int(stmt, 3, Int32(startTime))
 
-            if sqlite3_step(stmt) == SQLITE_DONE {
-                print("✅ Session saved locally: \(sessionId)")
-            } else {
-                print("❌ Error inserting session")
+                if sqlite3_step(stmt) == SQLITE_DONE {
+                    print("✅ Session saved locally: \(sessionId)")
+                } else {
+                    print("❌ Error inserting session")
+                }
             }
+            sqlite3_finalize(stmt)
         }
-        sqlite3_finalize(stmt)
     }
 
     func updateSessionEnd(sessionId: String, endTime: Int, duration: Double) {
-        let sql = """
-        UPDATE sessions
-        SET end_time = ?, duration_minutes = ?
-        WHERE session_id = ?;
-        """
+        syncOnDBQueue {
+            let sql = """
+            UPDATE sessions
+            SET end_time = ?, duration_minutes = ?
+            WHERE session_id = ?;
+            """
 
-        var stmt: OpaquePointer?
-        if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
-            sqlite3_bind_int(stmt, 1, Int32(endTime))
-            sqlite3_bind_double(stmt, 2, duration)
-            sqlite3_bind_text(stmt, 3, (sessionId as NSString).utf8String, -1, nil)
+            var stmt: OpaquePointer?
+            if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
+                sqlite3_bind_int(stmt, 1, Int32(endTime))
+                sqlite3_bind_double(stmt, 2, duration)
+                sqlite3_bind_text(stmt, 3, (sessionId as NSString).utf8String, -1, sqliteTransient)
 
-            if sqlite3_step(stmt) == SQLITE_DONE {
-                print("✅ Session ended: \(sessionId)")
+                if sqlite3_step(stmt) == SQLITE_DONE {
+                    print("✅ Session ended: \(sessionId)")
+                }
             }
+            sqlite3_finalize(stmt)
         }
-        sqlite3_finalize(stmt)
     }
 
     // MARK: - Sensor Data Storage
@@ -131,45 +152,47 @@ class LocalDatabase {
     func insertSensorBatch(sessionId: String, samples: [[String: Any]]) {
         guard !samples.isEmpty else { return }
 
-        // Extract timestamps
-        let timestamps = samples.compactMap { $0["timestamp"] as? Double }
-        guard let startTimestamp = timestamps.min(),
-              let endTimestamp = timestamps.max() else {
-            print("❌ Invalid timestamps in sensor batch")
-            return
-        }
-
-        // Compress data (gzip)
-        let compressedData = compressSamples(samples)
-
-        // Generate buffer ID
-        let bufferId = "buffer_\(UUID().uuidString)"
-
-        let sql = """
-        INSERT INTO raw_sensor_buffer (buffer_id, session_id, start_timestamp, end_timestamp, sample_count, compressed_data)
-        VALUES (?, ?, ?, ?, ?, ?);
-        """
-
-        var stmt: OpaquePointer?
-        if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
-            sqlite3_bind_text(stmt, 1, (bufferId as NSString).utf8String, -1, nil)
-            sqlite3_bind_text(stmt, 2, (sessionId as NSString).utf8String, -1, nil)
-            sqlite3_bind_double(stmt, 3, startTimestamp)
-            sqlite3_bind_double(stmt, 4, endTimestamp)
-            sqlite3_bind_int(stmt, 5, Int32(samples.count))
-
-            // Bind compressed data as BLOB
-            _ = compressedData.withUnsafeBytes { bytes in
-                sqlite3_bind_blob(stmt, 6, bytes.baseAddress, Int32(compressedData.count), nil)
+        syncOnDBQueue {
+            // Extract timestamps
+            let timestamps = samples.compactMap { $0["timestamp"] as? Double }
+            guard let startTimestamp = timestamps.min(),
+                  let endTimestamp = timestamps.max() else {
+                print("❌ Invalid timestamps in sensor batch")
+                return
             }
 
-            if sqlite3_step(stmt) == SQLITE_DONE {
-                print("💾 Saved \(samples.count) samples locally (compressed: \(compressedData.count) bytes)")
-            } else {
-                print("❌ Error inserting sensor batch")
+            // Compress data (gzip)
+            let compressedData = compressSamples(samples)
+
+            // Generate buffer ID
+            let bufferId = "buffer_\(UUID().uuidString)"
+
+            let sql = """
+            INSERT INTO raw_sensor_buffer (buffer_id, session_id, start_timestamp, end_timestamp, sample_count, compressed_data)
+            VALUES (?, ?, ?, ?, ?, ?);
+            """
+
+            var stmt: OpaquePointer?
+            if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
+                sqlite3_bind_text(stmt, 1, (bufferId as NSString).utf8String, -1, sqliteTransient)
+                sqlite3_bind_text(stmt, 2, (sessionId as NSString).utf8String, -1, sqliteTransient)
+                sqlite3_bind_double(stmt, 3, startTimestamp)
+                sqlite3_bind_double(stmt, 4, endTimestamp)
+                sqlite3_bind_int(stmt, 5, Int32(samples.count))
+
+                // Bind compressed data as BLOB
+                _ = compressedData.withUnsafeBytes { bytes in
+                    sqlite3_bind_blob(stmt, 6, bytes.baseAddress, Int32(compressedData.count), sqliteTransient)
+                }
+
+                if sqlite3_step(stmt) == SQLITE_DONE {
+                    print("💾 Saved \(samples.count) samples locally (compressed: \(compressedData.count) bytes)")
+                } else {
+                    print("❌ Error inserting sensor batch")
+                }
             }
+            sqlite3_finalize(stmt)
         }
-        sqlite3_finalize(stmt)
     }
 
     // MARK: - Data Compression
@@ -229,22 +252,24 @@ class LocalDatabase {
         var sessionCount = 0
         var sampleCount = 0
 
-        // Count sessions
-        var stmt: OpaquePointer?
-        if sqlite3_prepare_v2(db, "SELECT COUNT(*) FROM sessions", -1, &stmt, nil) == SQLITE_OK {
-            if sqlite3_step(stmt) == SQLITE_ROW {
-                sessionCount = Int(sqlite3_column_int(stmt, 0))
+        syncOnDBQueue {
+            // Count sessions
+            var stmt: OpaquePointer?
+            if sqlite3_prepare_v2(db, "SELECT COUNT(*) FROM sessions", -1, &stmt, nil) == SQLITE_OK {
+                if sqlite3_step(stmt) == SQLITE_ROW {
+                    sessionCount = Int(sqlite3_column_int(stmt, 0))
+                }
             }
-        }
-        sqlite3_finalize(stmt)
+            sqlite3_finalize(stmt)
 
-        // Count total samples
-        if sqlite3_prepare_v2(db, "SELECT SUM(sample_count) FROM raw_sensor_buffer", -1, &stmt, nil) == SQLITE_OK {
-            if sqlite3_step(stmt) == SQLITE_ROW {
-                sampleCount = Int(sqlite3_column_int(stmt, 0))
+            // Count total samples
+            if sqlite3_prepare_v2(db, "SELECT SUM(sample_count) FROM raw_sensor_buffer", -1, &stmt, nil) == SQLITE_OK {
+                if sqlite3_step(stmt) == SQLITE_ROW {
+                    sampleCount = Int(sqlite3_column_int(stmt, 0))
+                }
             }
+            sqlite3_finalize(stmt)
         }
-        sqlite3_finalize(stmt)
 
         // Get file size
         let fileSize = (try? FileManager.default.attributesOfItem(atPath: dbPath)[.size] as? Int) ?? 0

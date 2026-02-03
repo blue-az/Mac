@@ -41,10 +41,13 @@ class WatchConnectivityDelegate: NSObject, WCSessionDelegate {
         if let error = error {
             print("❌ WCSession activation error: \(error.localizedDescription)")
             os_log("❌ WCSession activation error: %{public}@", log: logger, type: .error, error.localizedDescription)
+            DebugEventSender.send("wc_activation_error", details: ["error": error.localizedDescription])
         } else {
             print("✅ WCSession activated: \(activationState.rawValue)")
             os_log("✅ WCSession activated on Watch: state=%d", log: logger, type: .info, activationState.rawValue)
             print("📬 Pending userInfo transfers: \(session.outstandingUserInfoTransfers.count)")
+            DebugEventSender.send("wc_activated", details: ["state": activationState.rawValue,
+                                                          "pendingUserInfo": session.outstandingUserInfoTransfers.count])
         }
     }
 

@@ -76,31 +76,61 @@ class AudioManager: NSObject, ObservableObject {
     // MARK: - Permission
 
     func checkPermission() {
-        switch AVAudioSession.sharedInstance().recordPermission {
-        case .granted:
-            hasPermission = true
-            print("🎤 Microphone permission granted")
-        case .denied:
-            hasPermission = false
-            print("🎤 Microphone permission denied")
-        case .undetermined:
-            hasPermission = false
-            print("🎤 Microphone permission undetermined")
-        @unknown default:
-            hasPermission = false
+        if #available(watchOS 10.0, *) {
+            switch AVAudioApplication.shared.recordPermission {
+            case .granted:
+                hasPermission = true
+                print("🎤 Microphone permission granted")
+            case .denied:
+                hasPermission = false
+                print("🎤 Microphone permission denied")
+            case .undetermined:
+                hasPermission = false
+                print("🎤 Microphone permission undetermined")
+            @unknown default:
+                hasPermission = false
+            }
+        } else {
+            switch AVAudioSession.sharedInstance().recordPermission {
+            case .granted:
+                hasPermission = true
+                print("🎤 Microphone permission granted")
+            case .denied:
+                hasPermission = false
+                print("🎤 Microphone permission denied")
+            case .undetermined:
+                hasPermission = false
+                print("🎤 Microphone permission undetermined")
+            @unknown default:
+                hasPermission = false
+            }
         }
     }
 
     func requestPermission(completion: @escaping (Bool) -> Void) {
-        AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
-            DispatchQueue.main.async {
-                self?.hasPermission = granted
-                if granted {
-                    print("✅ Microphone permission granted")
-                } else {
-                    print("❌ Microphone permission denied")
+        if #available(watchOS 10.0, *) {
+            AVAudioApplication.requestRecordPermission { [weak self] granted in
+                DispatchQueue.main.async {
+                    self?.hasPermission = granted
+                    if granted {
+                        print("✅ Microphone permission granted")
+                    } else {
+                        print("❌ Microphone permission denied")
+                    }
+                    completion(granted)
                 }
-                completion(granted)
+            }
+        } else {
+            AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
+                DispatchQueue.main.async {
+                    self?.hasPermission = granted
+                    if granted {
+                        print("✅ Microphone permission granted")
+                    } else {
+                        print("❌ Microphone permission denied")
+                    }
+                    completion(granted)
+                }
             }
         }
     }

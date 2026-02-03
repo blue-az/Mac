@@ -9,6 +9,7 @@
 import Foundation
 import HealthKit
 import Combine
+import WatchKit
 
 class WorkoutManager: NSObject, ObservableObject {
     // MARK: - Properties
@@ -16,6 +17,7 @@ class WorkoutManager: NSObject, ObservableObject {
     private let healthStore = HKHealthStore()
     private var session: HKWorkoutSession?
     private var builder: HKLiveWorkoutBuilder?
+    private var runtimeSession: WKExtendedRuntimeSession?
 
     @Published @MainActor var isWorkoutActive = false
     @Published @MainActor var workoutState: HKWorkoutSessionState = .notStarted
@@ -55,6 +57,9 @@ class WorkoutManager: NSObject, ObservableObject {
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .tennis
         configuration.locationType = .outdoor  // Can be changed to .indoor if needed
+        DebugEventSender.send("workout_start_requested", details: ["activity": "tennis", "location": "outdoor"])
+
+        startRuntimeSession()
 
         do {
             // Create workout session
@@ -81,6 +86,10 @@ class WorkoutManager: NSObject, ObservableObject {
 
                 if let error = error {
                     print("❌ Error beginning collection: \(error.localizedDescription)")
+                    DebugEventSender.send(
+                        "workout_collection_error",
+                        details: ["error": error.localizedDescription]
+                    )
                     return
                 }
 
@@ -88,11 +97,13 @@ class WorkoutManager: NSObject, ObservableObject {
                     self.isWorkoutActive = true
                     print("✅ Workout session started successfully")
                     print("   App will continue running even when screen goes dark")
+                    DebugEventSender.send("workout_started")
                 }
             }
 
         } catch {
             print("❌ Error starting workout: \(error.localizedDescription)")
+            DebugEventSender.send("workout_start_error", details: ["error": error.localizedDescription])
         }
     }
 
@@ -103,6 +114,9 @@ class WorkoutManager: NSObject, ObservableObject {
         session.end()
 
         print("🏁 Ending workout session...")
+        DebugEventSender.send("workout_stop_requested")
+
+        stopRuntimeSession()
     }
 
     private func finishWorkout() {
@@ -114,6 +128,7 @@ class WorkoutManager: NSObject, ObservableObject {
 
             if let error = error {
                 print("❌ Error finishing workout: \(error.localizedDescription)")
+                DebugEventSender.send("workout_finish_error", details: ["error": error.localizedDescription])
                 return
             }
 
@@ -122,8 +137,27 @@ class WorkoutManager: NSObject, ObservableObject {
                 self.session = nil
                 self.builder = nil
                 print("✅ Workout finished and saved to HealthKit")
+                DebugEventSender.send("workout_finished")
+                self.stopRuntimeSession()
             }
         }
+    }
+
+    // MARK: - Extended Runtime
+
+    private func startRuntimeSession() {
+        let runtime = WKExtendedRuntimeSession()
+        runtime.delegate = self
+        runtime.start()
+        runtimeSession = runtime
+        DebugEventSender.send("runtime_session_started")
+    }
+
+    private func stopRuntimeSession() {
+        if let runtimeSession = runtimeSession {
+            runtimeSession.invalidate()
+        }
+        runtimeSession = nil
     }
 }
 
@@ -140,6 +174,10 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
             self.workoutState = toState
 
             print("🔄 Workout state changed: \(fromState.rawValue) -> \(toState.rawValue)")
+            DebugEventSender.send(
+                "workout_state_changed",
+                details: ["from": fromState.rawValue, "to": toState.rawValue]
+            )
 
             switch toState {
             case .running:
@@ -157,6 +195,31 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
         didFailWithError error: Error
     ) {
         print("❌ Workout session failed: \(error.localizedDescription)")
+        DebugEventSender.send("workout_session_failed", details: ["error": error.localizedDescription])
+    }
+}
+
+// MARK: - WKExtendedRuntimeSessionDelegate
+
+extension WorkoutManager: WKExtendedRuntimeSessionDelegate {
+    func extendedRuntimeSessionDidStart(_ extendedRuntimeSession: WKExtendedRuntimeSession) {
+        DebugEventSender.send("runtime_session_did_start")
+    }
+
+    func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {
+        DebugEventSender.send("runtime_session_will_expire")
+    }
+
+    func extendedRuntimeSession(
+        _ extendedRuntimeSession: WKExtendedRuntimeSession,
+        didInvalidateWith reason: WKExtendedRuntimeSessionInvalidationReason,
+        error: Error?
+    ) {
+        var details: [String: Any] = ["reason": reason.rawValue]
+        if let error = error {
+            details["error"] = error.localizedDescription
+        }
+        DebugEventSender.send("runtime_session_invalidated", details: details)
     }
 }
 

@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var watchReachable = false
     @State private var dbStats = (sessions: 0, samples: 0, sizeBytes: 0)
     @State private var showingClearDatabaseAlert = false
+    @State private var httpServerRunning = false
+    @State private var httpServerURL: String? = nil
 
     var body: some View {
         NavigationView {
@@ -25,7 +27,7 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .foregroundStyle(.green)
 
-                    Text("TT v3.4")
+                    Text("TT v4.0.0")
                         .font(.title)
                         .fontWeight(.bold)
 
@@ -86,9 +88,60 @@ struct ContentView: View {
                             Text("4.")
                             Text("Pull data with pymobiledevice3")
                         }
+                        HStack(alignment: .top) {
+                            Text("Note:")
+                            Text("Keep this iPhone screen on during sessions so it stays awake and receives data.")
+                        }
                     }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 15)
+                        .fill(Color(.systemGray6))
+                )
+                .padding(.horizontal)
+
+                Spacer()
+
+                // HTTP Server
+                VStack(spacing: 10) {
+                    HStack {
+                        Image(systemName: "network")
+                            .foregroundStyle(.purple)
+                        Text("HTTP Server")
+                            .font(.headline)
+                        Spacer()
+                    }
+
+                    if let url = httpServerURL, httpServerRunning {
+                        Text(url)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        Text("Start a local HTTP server for direct downloads on the same Wi‑Fi.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Button(action: {
+                        toggleHTTPServer()
+                    }) {
+                        HStack {
+                            Image(systemName: httpServerRunning ? "stop.circle.fill" : "play.circle.fill")
+                            Text(httpServerRunning ? "Stop HTTP Server" : "Start HTTP Server")
+                        }
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(httpServerRunning ? Color.red : Color.purple)
+                        .cornerRadius(10)
+                    }
                 }
                 .padding()
                 .background(
@@ -196,6 +249,19 @@ struct ContentView: View {
         generator.notificationOccurred(.success)
 
         print("✅ Database cleared successfully")
+    }
+
+    private func toggleHTTPServer() {
+        if httpServerRunning {
+            HTTPFileServer.shared.stop()
+            httpServerRunning = false
+            httpServerURL = nil
+            return
+        }
+
+        let url = LocalDatabase.shared.getDatabaseURL()
+        httpServerURL = HTTPFileServer.shared.start(fileURL: url)
+        httpServerRunning = httpServerURL != nil
     }
 }
 

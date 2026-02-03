@@ -9,6 +9,7 @@ class MotionManager: NSObject, ObservableObject {
 
     private let motionManager = CMMotionManager()
     private let queue = OperationQueue()
+    private let heartbeatQueue = DispatchQueue(label: "com.ef.TennisSensor.heartbeat")
 
     // Console.app logging
     private let logger = OSLog(subsystem: "com.ef.TennisSensor.watchkitapp", category: "MotionManager")
@@ -24,6 +25,8 @@ class MotionManager: NSObject, ObservableObject {
     private var lastSentCount = 0
     // Send incremental batches every N samples for reliability
     private let batchSize = 100
+    private let heartbeatInterval: TimeInterval = 30
+    private var heartbeatTimer: DispatchSourceTimer?
 
     // MARK: - Configuration
 
@@ -44,12 +47,18 @@ class MotionManager: NSObject, ObservableObject {
 
         print("🎾 Starting motion capture session...")
         os_log("🎾 Starting motion capture session...", log: logger, type: .info)
+        DebugEventSender.send("motion_start", sessionId: sessionId)
 
         // v2.6: Warn if workout session is not active
         if !workoutSessionActive {
             print("⚠️  Warning: Starting motion recording without active workout session")
             print("   Screen may turn off and suspend data collection")
             os_log("⚠️ Warning: No active workout session - screen sleep may interrupt recording", log: logger, type: .default)
+            DebugEventSender.send(
+                "motion_start_no_workout",
+                sessionId: sessionId,
+                details: ["workoutSessionActive": false]
+            )
         }
 
         // Reset state
@@ -60,6 +69,7 @@ class MotionManager: NSObject, ObservableObject {
         activeSessionId = sessionId
         lastSampleTime = 0  // v2.7: Reset throttling
         isRecording = true
+        startHeartbeatTimer(sessionId: sessionId)
 
         // Configure motion manager
         motionManager.deviceMotionUpdateInterval = updateInterval
@@ -85,8 +95,10 @@ class MotionManager: NSObject, ObservableObject {
         guard isRecording else { return }
 
         print("🏁 Stopping motion capture session...")
+        DebugEventSender.send("motion_stop", sessionId: activeSessionId)
 
         isRecording = false
+        stopHeartbeatTimer()
         motionManager.stopDeviceMotionUpdates()
 
         // Send entire session data to iPhone
@@ -154,6 +166,11 @@ class MotionManager: NSObject, ObservableObject {
 
         guard session.activationState == .activated else {
             print("⚠️  WCSession not activated, skipping batch send")
+            DebugEventSender.send(
+                "wc_not_activated_incremental",
+                sessionId: activeSessionId,
+                details: ["activationState": session.activationState.rawValue]
+            )
             return
         }
 
@@ -193,6 +210,7 @@ class MotionManager: NSObject, ObservableObject {
 
         // Check WCSession state
         let session = WCSession.default
+        let sessionId = activeSessionId ?? "watch_\(DateFormatter.sessionIdFormatter.string(from: sessionStartTime ?? Date()))"
         print("🔍 WCSession Debug Info:")
         print("   isSupported: \(WCSession.isSupported())")
         print("   activationState: \(session.activationState.rawValue)")
@@ -205,13 +223,16 @@ class MotionManager: NSObject, ObservableObject {
         guard session.activationState == .activated else {
             print("❌ WCSession not activated! Cannot send data.")
             os_log("❌ WCSession not activated! Cannot send data. State: %d", log: logger, type: .error, session.activationState.rawValue)
+            DebugEventSender.send(
+                "wc_not_activated_final",
+                sessionId: sessionId,
+                details: ["activationState": session.activationState.rawValue]
+            )
             return
         }
 
         // Get any remaining unsent samples
         let newSamples = Array(sampleBuffer[lastSentCount..<sampleBuffer.count])
-        let sessionId = activeSessionId ?? "watch_\(DateFormatter.sessionIdFormatter.string(from: sessionStartTime ?? Date()))"
-
         if !newSamples.isEmpty {
             let samplesData = newSamples.map { $0.toDictionary() }
 
@@ -245,6 +266,34 @@ class MotionManager: NSObject, ObservableObject {
         // Clear buffer after session ends
         sampleBuffer.removeAll()
         lastSentCount = 0
+    }
+
+    // MARK: - Heartbeat
+
+    private func startHeartbeatTimer(sessionId: String) {
+        stopHeartbeatTimer()
+
+        let timer = DispatchSource.makeTimerSource(queue: heartbeatQueue)
+        timer.schedule(deadline: .now() + heartbeatInterval, repeating: heartbeatInterval)
+        timer.setEventHandler { [weak self] in
+            guard let self = self, self.isRecording else { return }
+            DebugEventSender.send(
+                "heartbeat",
+                sessionId: sessionId,
+                details: [
+                    "samples": self.sampleCount,
+                    "duration": Int(self.sessionDuration),
+                    "workoutActive": self.workoutSessionActive
+                ]
+            )
+        }
+        heartbeatTimer = timer
+        timer.resume()
+    }
+
+    private func stopHeartbeatTimer() {
+        heartbeatTimer?.cancel()
+        heartbeatTimer = nil
     }
 }
 

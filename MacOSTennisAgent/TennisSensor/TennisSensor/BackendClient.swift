@@ -21,6 +21,11 @@ class BackendClient: NSObject, ObservableObject {
 
     // Console.app logging
     private let logger = OSLog(subsystem: "com.ef.TennisSensor", category: "BackendClient")
+    private let debugDateFormatter = ISO8601DateFormatter()
+    private lazy var debugLogURL: URL = {
+        let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        return documentsDir.appendingPathComponent("watch_debug.log")
+    }()
 
     // MARK: - Properties
 
@@ -141,6 +146,8 @@ extension BackendClient: WCSessionDelegate {
         switch messageType {
         case "incremental_batch":
             handleIncrementalBatch(userInfo)
+        case "debug_event":
+            handleDebugEvent(userInfo)
         default:
             print("⚠️ Unknown message type: \(messageType)")
         }
@@ -227,6 +234,31 @@ extension BackendClient: WCSessionDelegate {
                 setIdleTimerDisabled(false)
             }
             print("✅ Session complete: \(sessionId) (\(totalSoFar) samples)")
+        }
+    }
+
+    private func handleDebugEvent(_ userInfo: [String: Any]) {
+        let timestamp = userInfo["timestamp"] as? Double
+        let date = timestamp.map { Date(timeIntervalSince1970: $0) } ?? Date()
+        let event = userInfo["event"] as? String ?? "unknown"
+        let sessionId = userInfo["session_id"] as? String ?? "-"
+        let details = userInfo["details"] as? [String: Any] ?? [:]
+
+        let line = "\(debugDateFormatter.string(from: date)) | \(event) | session=\(sessionId) | \(details)\n"
+        appendDebugLog(line)
+        print("🐞 Watch debug: \(line.trimmingCharacters(in: .whitespacesAndNewlines))")
+    }
+
+    private func appendDebugLog(_ line: String) {
+        let data = Data(line.utf8)
+        if FileManager.default.fileExists(atPath: debugLogURL.path) {
+            if let handle = try? FileHandle(forWritingTo: debugLogURL) {
+                handle.seekToEndOfFile()
+                handle.write(data)
+                try? handle.close()
+            }
+        } else {
+            try? data.write(to: debugLogURL, options: .atomic)
         }
     }
 }

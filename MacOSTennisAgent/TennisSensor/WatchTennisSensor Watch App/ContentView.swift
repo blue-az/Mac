@@ -10,6 +10,7 @@ import SwiftUI
 import WatchConnectivity
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var motionManager = MotionManager()
     @StateObject private var workoutManager = WorkoutManager()
     @StateObject private var audioManager = AudioManager()
@@ -31,7 +32,7 @@ struct ContentView: View {
                     .font(.system(size: 20))
                     .foregroundStyle(motionManager.isRecording ? .green : .gray)
 
-                Text("TT v3.4")
+                Text("TT v4.0.0")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
             }
@@ -119,6 +120,11 @@ struct ContentView: View {
                 .buttonStyle(.plain)
                 .onChange(of: motionManager.isRecording) { _, isRecording in
                     pulseAnimation = isRecording
+                    DebugEventSender.send(
+                        "recording_state_changed",
+                        sessionId: currentSessionId,
+                        details: ["isRecording": isRecording]
+                    )
                     if !isRecording && motionManager.sampleCount > 0 {
                         showingSessionComplete = true
                     }
@@ -172,10 +178,18 @@ struct ContentView: View {
         .onAppear {
             checkWCSession()
         }
+        .onChange(of: scenePhase) { _, newPhase in
+            DebugEventSender.send(
+                "scene_phase_change",
+                sessionId: currentSessionId,
+                details: ["phase": String(describing: newPhase)]
+            )
+        }
     }
 
     private func startSession() {
         print("🎾 Starting tennis session...")
+        DebugEventSender.send("start_session_tapped", details: ["has_active_session": currentSessionId != nil])
 
         let now = Date()
         var isResuming = false
@@ -203,6 +217,7 @@ struct ContentView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             motionManager.workoutSessionActive = workoutManager.isWorkoutActive
             if let sessionId = currentSessionId {
+                DebugEventSender.send("motion_start_requested", sessionId: sessionId)
                 motionManager.startSession(sessionId: sessionId)
             }
 
@@ -218,6 +233,7 @@ struct ContentView: View {
 
     private func stopSession() {
         print("🏁 Stopping tennis session...")
+        DebugEventSender.send("stop_session_tapped", sessionId: currentSessionId)
 
         // v2.6: Stop motion recording first
         motionManager.stopSession()
@@ -239,6 +255,7 @@ struct ContentView: View {
 
     private func resetSession() {
         print("🔄 Resetting to home screen...")
+        DebugEventSender.send("reset_session_tapped", sessionId: currentSessionId)
 
         // Clear the session complete flag to return to home screen
         showingSessionComplete = false
