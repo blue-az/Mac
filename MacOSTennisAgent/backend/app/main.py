@@ -28,6 +28,18 @@ from app.models.sensor_data import (
 # Global state
 active_sessions: Dict[str, SwingDetector] = {}
 database_path = Path(__file__).parent.parent.parent / "database" / "tennis_watch.db"
+relay_clients: set[WebSocket] = set()
+
+
+async def broadcast_to_relay(message: dict):
+    """Send message to all connected relay clients."""
+    disconnected = set()
+    for client in relay_clients:
+        try:
+            await client.send_json(message)
+        except Exception:
+            disconnected.add(client)
+    relay_clients -= disconnected
 
 
 # ============================================================================
@@ -262,6 +274,7 @@ async def lifespan(app: FastAPI):
     print("="*70)
     print(f"Database: {database_path}")
     print(f"WebSocket endpoint: ws://localhost:8000/ws")
+    print(f"Relay endpoint: ws://localhost:8000/ws/relay")
     print(f"API docs: http://localhost:8000/docs")
     print(f"Real-time swing detection: {'ENABLED' if ENABLE_REALTIME_SWING_DETECTION else 'DISABLED (SensorLogger mode)'}")
     print("="*70)
@@ -354,6 +367,14 @@ async def websocket_endpoint(websocket: WebSocket):
                         "message": f"Session {session_id} started"
                     })
 
+                    # Broadcast session start to relay clients
+                    if relay_clients:
+                        await broadcast_to_relay({
+                            "type": "session_start",
+                            "session_id": session_id,
+                            "device": device
+                        })
+
                 # Handle sensor batch
                 elif message_type == "sensor_batch":
                     # Parse batch message
@@ -420,6 +441,30 @@ async def websocket_endpoint(websocket: WebSocket):
                         for s in samples
                     ]
                     insert_raw_sensor_buffer(session_id, sample_dicts)
+
+                    # Broadcast to relay clients (real-time dashboard)
+                    if relay_clients:
+                        relay_msg = {
+                            "type": "sensor_batch",
+                            "session_id": session_id,
+                            "sample_count": len(samples),
+                            "samples": [
+                                {
+                                    "t": round(s.timestamp, 4),
+                                    "rx": round(s.rotation_x, 4),
+                                    "ry": round(s.rotation_y, 4),
+                                    "rz": round(s.rotation_z, 4),
+                                    "ax": round(s.accel_x, 4),
+                                    "ay": round(s.accel_y, 4),
+                                    "az": round(s.accel_z, 4),
+                                    "gx": round(s.gravity_x, 4),
+                                    "gy": round(s.gravity_y, 4),
+                                    "gz": round(s.gravity_z, 4),
+                                }
+                                for s in samples
+                            ]
+                        }
+                        await broadcast_to_relay(relay_msg)
 
                     # Real-time swing detection (optional)
                     if ENABLE_REALTIME_SWING_DETECTION:
@@ -497,6 +542,14 @@ async def websocket_endpoint(websocket: WebSocket):
                             "statistics": stats
                         })
 
+                        # Broadcast session end to relay clients
+                        if relay_clients:
+                            await broadcast_to_relay({
+                                "type": "session_end",
+                                "session_id": session_id,
+                                "statistics": stats
+                            })
+
                 else:
                     await websocket.send_json({
                         "type": "error",
@@ -530,6 +583,28 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 # ============================================================================
+# WebSocket Relay - Desktop Browser Real-Time Dashboard
+# ============================================================================
+
+@app.websocket("/ws/relay")
+async def relay_endpoint(websocket: WebSocket):
+    """
+    WebSocket relay for desktop browser visualization.
+    Receives broadcast of sensor batches from the main /ws handler.
+    Read-only: clients only receive, never send.
+    """
+    await websocket.accept()
+    relay_clients.add(websocket)
+    print(f"Relay client connected: {websocket.client} ({len(relay_clients)} total)")
+    try:
+        while True:
+            await websocket.receive_text()  # keep connection alive
+    except WebSocketDisconnect:
+        relay_clients.discard(websocket)
+        print(f"Relay client disconnected ({len(relay_clients)} remaining)")
+
+
+# ============================================================================
 # REST API Endpoints - Query Historical Data
 # ============================================================================
 
@@ -543,6 +618,7 @@ async def root():
         "active_sessions": len(active_sessions),
         "endpoints": {
             "websocket": "ws://localhost:8000/ws",
+            "relay": "ws://localhost:8000/ws/relay",
             "docs": "http://localhost:8000/docs",
             "sessions": "GET /api/sessions",
             "swings": "GET /api/swings",
