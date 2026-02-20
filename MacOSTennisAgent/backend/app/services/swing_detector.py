@@ -136,7 +136,7 @@ class SwingDetector:
 
         # Track detected peaks to avoid duplicates
         self.last_peak_timestamp = 0.0
-        self.min_peak_interval = 0.5  # seconds
+        self.min_peak_interval = 1.5  # seconds (prevents multi-counting same swing)
 
         # Statistics
         self.total_samples_processed = 0

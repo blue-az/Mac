@@ -27,11 +27,11 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .foregroundStyle(.green)
 
-                    Text("TT v4.0.0")
+                    Text("TT v5.0.0")
                         .font(.title)
                         .fontWeight(.bold)
 
-                    Text("USB Transfer Mode")
+                    Text("Live Streaming + USB")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -39,7 +39,7 @@ struct ContentView: View {
 
                 Spacer()
 
-                // WatchConnectivity Status
+                // Connection Status
                 VStack(spacing: 15) {
                     HStack(spacing: 15) {
                         HStack(spacing: 4) {
@@ -54,8 +54,19 @@ struct ContentView: View {
                             Circle()
                                 .fill(watchReachable ? Color.green : Color.orange)
                                 .frame(width: 10, height: 10)
-                            Text(watchReachable ? "Watch Connected" : "Watch Not Reachable")
+                            Text(watchReachable ? "Watch" : "Watch Not Reachable")
                                 .font(.subheadline)
+                        }
+                    }
+
+                    HStack(spacing: 15) {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(backendClient.isConnected ? Color.green : Color.orange)
+                                .frame(width: 10, height: 10)
+                            Text(backendClient.connectionStatus)
+                                .font(.subheadline)
+                                .lineLimit(1)
                         }
                     }
                 }
@@ -78,19 +89,19 @@ struct ContentView: View {
                         }
                         HStack(alignment: .top) {
                             Text("2.")
-                            Text("Data syncs to this iPhone automatically")
+                            Text("Data streams to Mac (if connected) + saves locally")
                         }
                         HStack(alignment: .top) {
                             Text("3.")
-                            Text("Connect iPhone to Mac via USB")
+                            Text("View live sensor data on Mac dashboard")
                         }
                         HStack(alignment: .top) {
-                            Text("4.")
-                            Text("Pull data with pymobiledevice3")
+                            Text("Backup:")
+                            Text("Data always saved locally - pull via USB if needed")
                         }
                         HStack(alignment: .top) {
                             Text("Note:")
-                            Text("Keep this iPhone screen on during sessions so it stays awake and receives data.")
+                            Text("Keep iPhone screen on during sessions for reliable streaming")
                         }
                     }
                     .font(.subheadline)

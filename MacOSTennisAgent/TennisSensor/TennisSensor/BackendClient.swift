@@ -2,9 +2,10 @@
 //  BackendClient.swift
 //  TennisSensor
 //
-//  v3.4 - Simplified for USB-only workflow
-//  Receives data from Watch via WatchConnectivity, stores in local SQLite
-//  Data pulled via pymobiledevice3 when connected to Mac
+//  v5.0.0 - Dual mode: WebSocket streaming + USB fallback
+//  - Live streaming when Mac server reachable (auto-discover)
+//  - Falls back to USB-only if server unreachable
+//  - Stores all data locally regardless of connection status
 //
 
 import Foundation
@@ -12,8 +13,7 @@ import UIKit
 import WatchConnectivity
 import os.log
 
-/// Manages WatchConnectivity and local database storage
-/// Deprecated: WebSocket backend connection (use USB pull instead)
+/// Manages WatchConnectivity, WebSocket streaming, and local database storage
 class BackendClient: NSObject, ObservableObject {
     // MARK: - Singleton
 
@@ -29,23 +29,42 @@ class BackendClient: NSObject, ObservableObject {
 
     // MARK: - Properties
 
-    @Published var isConnected = false  // Deprecated - always false in v3.4
-    @Published var connectionStatus = "USB Mode"
+    @Published var isConnected = false
+    @Published var connectionStatus = "Disconnected"
+    @Published var serverURL: String?
+
+    // WebSocket
+    private var webSocketTask: URLSessionWebSocketTask?
+    private var urlSession: URLSession?
+
+    // Server discovery
+    private let serverIPs = ["192.168.8.140", "192.168.8.170", "192.168.8.108", "127.0.0.1"]
+    private let serverPort = 8000
 
     // Track accumulated samples from incremental batches
     private var sessionSamples: [String: [[String: Any]]] = [:]
     private var sessionStarted: Set<String> = []
+    private var currentSessionId: String?
 
     // MARK: - Initialization
 
     private override init() {
-        print("🏗️ BackendClient.init() v3.4 - USB Mode")
+        print("🏗️ BackendClient.init() v5.0.0 - Dual Mode (WebSocket + USB)")
         super.init()
+
+        // Setup URLSession
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 10
+        config.timeoutIntervalForResource = 300
+        urlSession = URLSession(configuration: config)
 
         // Setup WatchConnectivity
         setupWatchConnectivity()
 
-        NSLog("⚡️ BACKENDCLIENT v3.4 INITIALIZED - USB MODE ⚡️")
+        // Auto-connect to Mac server
+        autoDiscoverAndConnect()
+
+        NSLog("⚡️ BACKENDCLIENT v5.0.0 INITIALIZED - DUAL MODE ⚡️")
     }
 
     // MARK: - WatchConnectivity Setup
@@ -63,16 +82,111 @@ class BackendClient: NSObject, ObservableObject {
         print("🔗 WatchConnectivity setup complete")
     }
 
-    // MARK: - Deprecated Methods (kept for compatibility)
+    // MARK: - WebSocket Connection
 
-    func connect() {
-        // Deprecated - no backend connection in v3.4
-        print("⚠️ connect() deprecated in v3.4 - using USB mode")
+    private func autoDiscoverAndConnect() {
+        Task {
+            for ip in serverIPs {
+                let urlString = "http://\(ip):\(serverPort)/api/health"
+                guard let url = URL(string: urlString) else { continue }
+
+                do {
+                    let (_, response) = try await URLSession.shared.data(from: url)
+                    if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                        print("✅ Found Mac server at \(ip):\(serverPort)")
+                        await connectToServer(ip: ip)
+                        return
+                    }
+                } catch {
+                    // Server not reachable at this IP, try next
+                    continue
+                }
+            }
+
+            // No server found - fallback to USB mode
+            await MainActor.run {
+                self.connectionStatus = "USB Mode (Server not found)"
+                self.isConnected = false
+                print("⚠️ No Mac server found - using USB-only mode")
+            }
+        }
+    }
+
+    @MainActor
+    private func connectToServer(ip: String) {
+        let wsURL = URL(string: "ws://\(ip):\(serverPort)/ws")!
+        serverURL = wsURL.absoluteString
+
+        webSocketTask = urlSession?.webSocketTask(with: wsURL)
+        webSocketTask?.resume()
+
+        connectionStatus = "Connected to \(ip)"
+        isConnected = true
+
+        print("🔗 WebSocket connected: \(wsURL)")
+
+        // Start receiving messages
+        receiveMessage()
     }
 
     func disconnect() {
-        // Deprecated - no backend connection in v3.4
-        print("⚠️ disconnect() deprecated in v3.4 - using USB mode")
+        webSocketTask?.cancel(with: .goingAway, reason: nil)
+        webSocketTask = nil
+
+        DispatchQueue.main.async {
+            self.isConnected = false
+            self.connectionStatus = "Disconnected"
+        }
+
+        print("🔌 WebSocket disconnected")
+    }
+
+    private func receiveMessage() {
+        webSocketTask?.receive { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let message):
+                switch message {
+                case .string(let text):
+                    print("📥 Received: \(text)")
+                case .data(let data):
+                    print("📥 Received data: \(data.count) bytes")
+                @unknown default:
+                    break
+                }
+                // Continue receiving
+                self.receiveMessage()
+
+            case .failure(let error):
+                print("❌ WebSocket receive error: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.isConnected = false
+                    self.connectionStatus = "Disconnected"
+                }
+            }
+        }
+    }
+
+    private func sendMessage(_ message: [String: Any]) {
+        guard isConnected, let webSocketTask = webSocketTask else {
+            print("⚠️ WebSocket not connected - data saved locally only")
+            return
+        }
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: message)
+            let jsonString = String(data: jsonData, encoding: .utf8)!
+            let wsMessage = URLSessionWebSocketTask.Message.string(jsonString)
+
+            webSocketTask.send(wsMessage) { error in
+                if let error = error {
+                    print("❌ WebSocket send error: \(error.localizedDescription)")
+                }
+            }
+        } catch {
+            print("❌ Failed to serialize message: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Local Database Operations
@@ -84,21 +198,61 @@ class BackendClient: NSObject, ObservableObject {
             return
         }
 
+        // Always save locally (USB fallback)
         LocalDatabase.shared.insertSensorBatch(sessionId: sessionId, samples: samples)
         print("💾 Saved \(samples.count) samples to local database")
+
+        // Stream to Mac server if connected
+        if isConnected {
+            let message: [String: Any] = [
+                "type": "sensor_batch",
+                "session_id": sessionId,
+                "samples": samples
+            ]
+            sendMessage(message)
+            print("📡 Streamed \(samples.count) samples to Mac server")
+        }
     }
 
     func startSession(sessionId: String, device: String = "AppleWatch") {
+        currentSessionId = sessionId
         let startTime = Int(Date().timeIntervalSince1970)
+
+        // Always save locally
         LocalDatabase.shared.insertSession(sessionId: sessionId, device: device, startTime: startTime)
         setIdleTimerDisabled(true)
         print("💾 Session started: \(sessionId)")
+
+        // Send to Mac server if connected
+        if isConnected {
+            let message: [String: Any] = [
+                "type": "session_start",
+                "session_id": sessionId,
+                "device": device
+            ]
+            sendMessage(message)
+            print("📡 Session start sent to Mac server")
+        }
     }
 
     func endSession(sessionId: String) {
         let endTime = Int(Date().timeIntervalSince1970)
+
+        // Always save locally
         LocalDatabase.shared.updateSessionEnd(sessionId: sessionId, endTime: endTime, duration: 0)
         print("💾 Session ended: \(sessionId)")
+
+        // Send to Mac server if connected
+        if isConnected {
+            let message: [String: Any] = [
+                "type": "session_end",
+                "session_id": sessionId
+            ]
+            sendMessage(message)
+            print("📡 Session end sent to Mac server")
+        }
+
+        currentSessionId = nil
     }
 
     private func setIdleTimerDisabled(_ disabled: Bool) {
