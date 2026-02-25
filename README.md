@@ -128,6 +128,114 @@ Logs: `/tmp/yabai_$USER.[out|err].log`, `/tmp/skhd_$USER.[out|err].log`
 
 ---
 
+## Ricing (unixporn setup)
+
+The core stack for a screenshot-worthy macOS desktop. Designed to match the Dracula aesthetic from the Linux setup.
+
+### Install
+
+```bash
+# Status bar
+brew install FelixKratz/formulae/sketchybar
+
+# Window borders
+brew install FelixKratz/formulae/borders
+
+# Terminal
+brew install --cask kitty
+
+# Nerd Font (icons in bar + Neovim statusline)
+brew install --cask font-jetbrains-mono-nerd-font
+```
+
+### sketchybar
+
+Custom status bar — hides the macOS menu bar and replaces it with a fully configurable alternative. Port the Dracula color scheme from Waybar (`#1e1e2e` background, `#50fa7b` accents).
+
+```bash
+# Start service
+brew services start sketchybar
+
+# Config location (add to dotfiles under macos/)
+~/.config/sketchybar/sketchybarrc
+~/.config/sketchybar/colors.sh
+~/.config/sketchybar/plugins/
+```
+
+Hide the native menu bar first:
+System Settings → Control Center → Automatically hide and show the Menu Bar → **Always**
+
+### JankyBorders
+
+Adds colored borders to windows — focused vs unfocused. Same visual effect as sway's `border` settings.
+
+```bash
+# Start service
+brew services start borders
+
+# Config: ~/.config/borders/bordersrc
+#!/bin/bash
+options=(
+    style=round
+    width=6.0
+    hidpi=on
+    active_color=0xff50fa7b    # Dracula green
+    inactive_color=0xff44475a  # Dracula comment
+)
+borders "${options[@]}"
+```
+
+### Kitty terminal
+
+Drop-in replacement for macOS Terminal with GPU acceleration and full color scheme support.
+
+```bash
+# Config location (add to dotfiles under macos/)
+~/.config/kitty/kitty.conf
+```
+
+Minimal Dracula config:
+```
+font_family      JetBrainsMono Nerd Font
+font_size        13.0
+background       #1e1e2e
+foreground       #f8f8f2
+selection_background #44475a
+color0  #21222c
+color1  #ff5555
+color2  #50fa7b
+color8  #6272a4
+color9  #ff6e6e
+color10 #69ff94
+```
+
+### Wallpaper
+
+Dracula wallpaper pack: https://draculatheme.com/wallpaper
+Or a solid dark: `#1e1e2e` (Dracula base).
+
+### Final touches
+
+```bash
+# Hide the dock
+defaults write com.apple.dock autohide -bool true && killall Dock
+
+# Disable window shadows (cleaner screenshots)
+sudo yabai -m config window_shadow off
+```
+
+### Dotfiles additions
+
+After configuring, stow back to dotfiles:
+
+```bash
+cd ~/dotfiles
+# Add sketchybar, borders, kitty configs to macos/ then:
+stow macos
+```
+
+---
+
 ## Dotfiles Reference
 
 Full config in [blue-az/dotfiles](https://github.com/blue-az/dotfiles) under `macos/`:
@@ -138,5 +246,8 @@ macos/
 ├── .yabairc
 ├── .skhdrc
 ├── .config/nvim/init.lua
+├── .config/kitty/kitty.conf          # after ricing
+├── .config/sketchybar/sketchybarrc   # after ricing
+├── .config/borders/bordersrc         # after ricing
 └── Library/LaunchAgents/com.local.KeyRemapping.plist
 ```
