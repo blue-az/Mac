@@ -383,14 +383,14 @@ print(decompressed.decode('utf-8'))  # Should show CSV with sensor data
 - Same schema as Mac backend (sessions, raw_sensor_buffer)
 - Stored in Documents directory: `tennis_watch.db`
 - gzip compression for sensor data (~10x reduction)
-- Location: `/Users/wikiwoo/Projects/MacOSTennisAgent/TennisSensor/TennisSensor/LocalDatabase.swift`
+- Location: `/path/to/MacOSTennisAgent/TennisSensor/TennisSensor/LocalDatabase.swift`
 
 **2. HTTPFileServer.swift** (iPhone app)
 - HTTP server for direct database downloads
 - Runs on port 8080 when activated
 - Allows Linux download via wget/curl
 - Auto-detects iPhone IP address
-- Location: `/Users/wikiwoo/Projects/MacOSTennisAgent/TennisSensor/TennisSensor/HTTPFileServer.swift`
+- Location: `/path/to/MacOSTennisAgent/TennisSensor/TennisSensor/HTTPFileServer.swift`
 
 ### Files Modified
 
@@ -711,8 +711,8 @@ CREATE TABLE raw_sensor_buffer (
    - To re-enable automatic builds: uncomment start-conditions in workflow file
 
 5. **Fixed backend connectivity** - Updated IP address
-   - Old IP: 192.168.8.185 (no longer valid)
-   - New IP: 192.168.8.159 (current Mac IP)
+   - Old IP: YOUR_MAC_IP (no longer valid)
+   - New IP: YOUR_MAC_IP (current Mac IP)
    - Backend must be on same WiFi network as iPhone
 
 **✅ Complete End-to-End Pipeline Verified:**
@@ -729,7 +729,7 @@ Watch (CoreMotion 100Hz)
   → WatchConnectivity (incremental batches)
   → iPhone (BackendClient)
   → WebSocket (TEXT messages)
-  → FastAPI Backend (ws://192.168.8.159:8000/ws)
+  → FastAPI Backend (ws://YOUR_MAC_IP:8000/ws)
   → SQLite Database
   ✅ ALL WORKING!
 ```
@@ -751,22 +751,22 @@ Watch (CoreMotion 100Hz)
   - All fixes applied
   - UI freeze resolved
   - Deployed to "Me" testing group
-  - Known issue: Hardcoded old IP (192.168.8.185)
+  - Known issue: Hardcoded old IP (YOUR_MAC_IP)
 
 **Local Development Build:**
 - Version: v2.6.3
-- IP: 192.168.8.159 (correct, current)
+- IP: YOUR_MAC_IP (correct, current)
 - Status: Verified working with PyAI test session
 - Installed via: Xcode direct build (Cmd+R)
 
 **Database:**
-- Location: `/Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db`
+- Location: `/path/to/MacOSTennisAgent/database/tennis_watch.db`
 - Size: ~1.5 MB
 - Sessions: 9 total
 - **Latest session:** watch_20251112_232514 (PyAI test, 10,810 samples)
 
 **Backend:**
-- Running on: Mac (192.168.8.159:8000)
+- Running on: Mac (YOUR_MAC_IP:8000)
 - Command: `uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload`
 - Status: Working (verified with PyAI session)
 - **Important:** `--reload` flag causes restart when Python files change
@@ -774,8 +774,8 @@ Watch (CoreMotion 100Hz)
 **Known Issues:**
 
 1. **IP Address Hardcoded** (Priority: High for TestFlight)
-   - Build 4 has old IP: 192.168.8.185
-   - Mac's current IP: 192.168.8.159
+   - Build 4 has old IP: YOUR_MAC_IP
+   - Mac's current IP: YOUR_MAC_IP
    - **Workaround:** Use local Xcode build for testing
    - **Fix for next build:** Either hardcode new IP or make it configurable
 
@@ -810,12 +810,12 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 # Check Mac's IP address:
 ifconfig | grep "inet " | grep -v "127.0.0.1"
-# Should show: inet 192.168.8.159
+# Should show: inet YOUR_MAC_IP
 ```
 
 **Step 2: Update IP if Changed**
 ```bash
-# If Mac IP is different from 192.168.8.159:
+# If Mac IP is different from YOUR_MAC_IP:
 cd ~/Projects/MacOSTennisAgent/TennisSensor
 # Edit TennisSensor/BackendClient.swift line 30
 # Update: private let backendURL = "ws://YOUR_MAC_IP:8000/ws"
@@ -891,7 +891,7 @@ sqlite3 ~/Projects/MacOSTennisAgent/database/tennis_watch.db \
 
 **Immediate Priority:**
 1. **Upload Build 5 with correct IP** to TestFlight
-   - Update BackendClient.swift with 192.168.8.159
+   - Update BackendClient.swift with YOUR_MAC_IP
    - Increment build number: `agvtool next-version -all`
    - Archive and upload to TestFlight
    - Complete export compliance
@@ -1541,7 +1541,7 @@ Error: "The device disconnected immediately after connecting"
 
 ### Apple Support Document Ready
 
-**Location:** `/Users/wikiwoo/Projects/MacOSTennisAgent/APPLE_SUPPORT_SUBMISSION.md`
+**Location:** `/path/to/MacOSTennisAgent/APPLE_SUPPORT_SUBMISSION.md`
 
 **Contents:**
 - Complete problem summary
@@ -1915,7 +1915,7 @@ Fixed `SensorSample` attribute access in `backend/app/main.py`:
 
 **Evidence:**
 ```
-📍 Database: /Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db
+📍 Database: /path/to/MacOSTennisAgent/database/tennis_watch.db
 📊 Size: 1.0 MB
 
 Sessions Recorded: 4
@@ -1975,7 +1975,7 @@ Total: 1,037 samples sent from iPhone
 **How to use:**
 ```bash
 # Create and run simulation
-cd /Users/wikiwoo/Projects/MacOSTennisAgent
+cd /path/to/MacOSTennisAgent
 source venv/bin/activate
 python3 /tmp/test_backend.py
 
@@ -2010,7 +2010,7 @@ Apple Watch SE (Physical Device)
 iPhone 15 Pro (Physical Device)
     ↓ WCSessionDelegate (didReceiveApplicationContext)
     ↓ WebSocket TEXT Messages (session_start, sensor_batch, session_end)
-    ↓ ws://192.168.8.185:8000/ws
+    ↓ ws://YOUR_MAC_IP:8000/ws
 Mac Backend (FastAPI + Python)
     ↓ FastAPI WebSocket Handler
     ↓ SwingDetector (Optional - Disabled by default)
@@ -2056,7 +2056,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 # ======================================================================
 # MacOSTennisAgent Backend Service
 # ======================================================================
-# Database: /Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db
+# Database: /path/to/MacOSTennisAgent/database/tennis_watch.db
 # WebSocket endpoint: ws://localhost:8000/ws
 # API docs: http://localhost:8000/docs
 # Real-time swing detection: DISABLED (SensorLogger mode)
@@ -2066,7 +2066,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ### Build & Install Apps (Xcode)
 ```bash
 # Option 1: Xcode GUI (Recommended)
-1. Open /Users/wikiwoo/Projects/MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj
+1. Open /path/to/MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj
 2. Select iPhone device from dropdown
 3. Product → Run (Cmd+R)
 
@@ -2109,7 +2109,7 @@ xcrun devicectl device install app --device 00008130-000214E90891401C \
 
 ## 💾 Database Schema
 
-**Location:** `/Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db`
+**Location:** `/path/to/MacOSTennisAgent/database/tennis_watch.db`
 
 ### Table: sessions
 ```sql
@@ -2257,7 +2257,7 @@ git pull
 ### Issue: iPhone Shows "Not Connected"
 **Solution:**
 1. Check backend is running: `lsof -i :8000`
-2. Verify IP address in BackendClient.swift (line 18): `192.168.8.185`
+2. Verify IP address in BackendClient.swift (line 18): `YOUR_MAC_IP`
 3. Kill and restart iPhone app
 4. Check firewall isn't blocking port 8000
 
@@ -2292,12 +2292,12 @@ detector = SwingDetector(
 - **Apple Watch SE:** 00008006-0008CD291E00C02E
 
 ### Backend
-- **WebSocket:** ws://192.168.8.185:8000/ws
-- **API Docs:** http://192.168.8.185:8000/docs
-- **Health Check:** http://192.168.8.185:8000/api/health
+- **WebSocket:** ws://YOUR_MAC_IP:8000/ws
+- **API Docs:** http://YOUR_MAC_IP:8000/docs
+- **Health Check:** http://YOUR_MAC_IP:8000/api/health
 
 ### Database
-- **Path:** /Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db
+- **Path:** /path/to/MacOSTennisAgent/database/tennis_watch.db
 - **Size:** 1.0 MB (currently)
 - **Sessions:** 4
 - **Total Samples:** 7,640
@@ -2705,8 +2705,8 @@ EOF
 
 **Build Artifacts:**
 ```
-iPhone app: /Users/wikiwoo/Library/Developer/Xcode/DerivedData/TennisSensor-ckzekecupxfwybgqkbbrnxnerfqg/Build/Products/Debug-iphoneos/TennisSensor.app
-Watch app: /Users/wikiwoo/Library/Developer/Xcode/DerivedData/TennisSensor-ckzekecupxfwybgqkbbrnxnerfqg/Build/Products/Debug-iphoneos/TennisSensor.app/Watch/WatchTennisSensor Watch App.app
+iPhone app: /path/to/Xcode/DerivedData/...
+Watch app: /path/to/Xcode/DerivedData/... Watch App.app
 ```
 
 ---

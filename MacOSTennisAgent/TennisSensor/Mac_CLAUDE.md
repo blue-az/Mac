@@ -11,9 +11,9 @@
 **Role:** Turn architectural designs into production code following Phoenix Principles
 
 **Essential Reading (Read FIRST):**
-1. `/home/blueaz/Python/warrior-tau-bench/PyAI/PyAI_welcome.txt` - Your role and responsibilities
-2. `/home/blueaz/Python/warrior-tau-bench/PyAI/AI_Onboarding_Guide_v3.txt` - Complete playbook
-3. `/home/blueaz/Python/warrior-tau-bench/PyAI/phoenix_principles.txt` - Core philosophy
+1. `/path/to/warrior-tau-bench/PyAI/PyAI_welcome.txt` - Your role and responsibilities
+2. `/path/to/warrior-tau-bench/PyAI/AI_Onboarding_Guide_v3.txt` - Complete playbook
+3. `/path/to/warrior-tau-bench/PyAI/phoenix_principles.txt` - Core philosophy
 
 **Core Principles:**
 - **Determinism:** No random values, all outputs traceable to inputs
@@ -31,9 +31,9 @@
 ## 📚 Quick Start Documentation (NEW!)
 
 **For Tennis Sensor System Understanding:**
-1. `/home/blueaz/MacOSTennisAgent/docs/SENSOR_ECOSYSTEM.md` - Sensor capabilities (Zepp U, Babolat, Apple Watch, Garmin)
-2. `/home/blueaz/MacOSTennisAgent/docs/DATABASE_SCHEMA.md` - Database structure and query patterns
-3. `/home/blueaz/MacOSTennisAgent/docs/IMPORT_WORKFLOW.md` - How to import sensor data
+1. `/path/to/MacOSTennisAgent/docs/SENSOR_ECOSYSTEM.md` - Sensor capabilities (Zepp U, Babolat, Apple Watch, Garmin)
+2. `/path/to/MacOSTennisAgent/docs/DATABASE_SCHEMA.md` - Database structure and query patterns
+3. `/path/to/MacOSTennisAgent/docs/IMPORT_WORKFLOW.md` - How to import sensor data
 
 **Key Facts:**
 - **Zepp U**: Primary data source (16,715 swings, 3+ years)
@@ -148,7 +148,7 @@ Fixed `SensorSample` attribute access in `backend/app/main.py`:
 
 **Evidence:**
 ```
-📍 Database: /Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db
+📍 Database: /path/to/MacOSTennisAgent/database/tennis_watch.db
 📊 Size: 1.0 MB
 
 Sessions Recorded: 4
@@ -208,7 +208,7 @@ Total: 1,037 samples sent from iPhone
 **How to use:**
 ```bash
 # Create and run simulation
-cd /Users/wikiwoo/Projects/MacOSTennisAgent
+cd /path/to/MacOSTennisAgent
 source venv/bin/activate
 python3 /tmp/test_backend.py
 
@@ -243,7 +243,7 @@ Apple Watch SE (Physical Device)
 iPhone 15 Pro (Physical Device)
     ↓ WCSessionDelegate (didReceiveApplicationContext)
     ↓ WebSocket TEXT Messages (session_start, sensor_batch, session_end)
-    ↓ ws://192.168.8.185:8000/ws
+    ↓ ws://YOUR_MAC_IP:8000/ws
 Mac Backend (FastAPI + Python)
     ↓ FastAPI WebSocket Handler
     ↓ SwingDetector (Optional - Disabled by default)
@@ -289,7 +289,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 # ======================================================================
 # MacOSTennisAgent Backend Service
 # ======================================================================
-# Database: /Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db
+# Database: /path/to/MacOSTennisAgent/database/tennis_watch.db
 # WebSocket endpoint: ws://localhost:8000/ws
 # API docs: http://localhost:8000/docs
 # Real-time swing detection: DISABLED (SensorLogger mode)
@@ -299,7 +299,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ### Build & Install Apps (Xcode)
 ```bash
 # Option 1: Xcode GUI (Recommended)
-1. Open /Users/wikiwoo/Projects/MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj
+1. Open /path/to/MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj
 2. Select iPhone device from dropdown
 3. Product → Run (Cmd+R)
 
@@ -342,7 +342,7 @@ xcrun devicectl device install app --device 00008130-000214E90891401C \
 
 ## 💾 Database Schema
 
-**Location:** `/Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db`
+**Location:** `/path/to/MacOSTennisAgent/database/tennis_watch.db`
 
 ### Table: sessions
 ```sql
@@ -490,7 +490,7 @@ git pull
 ### Issue: iPhone Shows "Not Connected"
 **Solution:**
 1. Check backend is running: `lsof -i :8000`
-2. Verify IP address in BackendClient.swift (line 18): `192.168.8.185`
+2. Verify IP address in BackendClient.swift (line 18): `YOUR_MAC_IP`
 3. Kill and restart iPhone app
 4. Check firewall isn't blocking port 8000
 
@@ -525,12 +525,12 @@ detector = SwingDetector(
 - **Apple Watch SE:** 00008006-0008CD291E00C02E
 
 ### Backend
-- **WebSocket:** ws://192.168.8.185:8000/ws
-- **API Docs:** http://192.168.8.185:8000/docs
-- **Health Check:** http://192.168.8.185:8000/api/health
+- **WebSocket:** ws://YOUR_MAC_IP:8000/ws
+- **API Docs:** http://YOUR_MAC_IP:8000/docs
+- **Health Check:** http://YOUR_MAC_IP:8000/api/health
 
 ### Database
-- **Path:** /Users/wikiwoo/Projects/MacOSTennisAgent/database/tennis_watch.db
+- **Path:** /path/to/MacOSTennisAgent/database/tennis_watch.db
 - **Size:** 1.0 MB (currently)
 - **Sessions:** 4
 - **Total Samples:** 7,640
@@ -938,8 +938,8 @@ EOF
 
 **Build Artifacts:**
 ```
-iPhone app: /Users/wikiwoo/Library/Developer/Xcode/DerivedData/TennisSensor-ckzekecupxfwybgqkbbrnxnerfqg/Build/Products/Debug-iphoneos/TennisSensor.app
-Watch app: /Users/wikiwoo/Library/Developer/Xcode/DerivedData/TennisSensor-ckzekecupxfwybgqkbbrnxnerfqg/Build/Products/Debug-iphoneos/TennisSensor.app/Watch/WatchTennisSensor Watch App.app
+iPhone app: /path/to/Xcode/DerivedData/...
+Watch app: /path/to/Xcode/DerivedData/... Watch App.app
 ```
 
 ---
