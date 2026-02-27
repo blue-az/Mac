@@ -13,9 +13,9 @@ class BackendClient: NSObject, ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
     private let urlSession: URLSession
 
-    /// Mac backend URL - UPDATE THIS WITH YOUR MAC'S IP ADDRESS
-    /// To find your Mac's IP: System Preferences → Network → IP Address
-    private let backendURL = "ws://192.168.8.155:8000/ws"  // Updated with current Mac IP
+    /// Mac backend URL - update with your backend host before running on device.
+    /// Example: ws://YOUR_MAC_IP:8000/ws
+    private let backendURL = "ws://YOUR_MAC_IP:8000/ws"
 
     // MARK: - Initialization
 

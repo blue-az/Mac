@@ -23,8 +23,8 @@
    - WebSocket endpoint ready at port 8000
 
 5. **✅ Mac IP Address Found**
-   - **Your Mac IP: 192.168.8.155**
-   - Backend URL: `ws://192.168.8.155:8000/ws`
+   - **Your Mac IP: YOUR_MAC_IP**
+   - Backend URL: `ws://YOUR_MAC_IP:8000/ws`
 
 6. **✅ Historical Data Processed**
    - WristMotion.csv copied to project
@@ -33,7 +33,7 @@
    - Peak speeds: 113.6 mph (39.05 rad/s rotation)
 
 7. **✅ iOS BackendClient.swift Updated**
-   - Backend URL configured with correct Mac IP: `ws://192.168.8.155:8000/ws`
+   - Backend URL configured with correct Mac IP: `ws://YOUR_MAC_IP:8000/ws`
 
 ---
 
@@ -46,7 +46,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 **Server will be available at:**
-- WebSocket: `ws://192.168.8.155:8000/ws`
+- WebSocket: `ws://YOUR_MAC_IP:8000/ws`
 - API Docs: `http://localhost:8000/docs`
 - Health Check: `http://localhost:8000/api/health`
 
@@ -72,14 +72,14 @@ The MacOSTennisAgent repository contains **component Swift files** but **not com
 
 #### Option 1: Use Existing TennisSensor Project (Recommended)
 
-You already have a TennisSensor Xcode project at:
-`/Users/wikiwoo/Documents/WatchProject/TennisSensor/TennisSensor.xcodeproj`
+You may already have a TennisSensor Xcode project at:
+`/path/to/WatchProject/TennisSensor/TennisSensor.xcodeproj`
 
 **Steps to integrate:**
 
 1. **Open the existing project:**
    ```bash
-   open /Users/wikiwoo/Documents/WatchProject/TennisSensor/TennisSensor.xcodeproj
+   open /path/to/WatchProject/TennisSensor/TennisSensor.xcodeproj
    ```
 
 2. **Add BackendClient to iOS app:**
@@ -130,7 +130,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### 2. Launch iPhone App
-- Should auto-connect to backend at `ws://192.168.8.155:8000/ws`
+- Should auto-connect to backend at `ws://YOUR_MAC_IP:8000/ws`
 - Check backend logs for: `📱 Client connected`
 
 ### 3. Start Watch Session
@@ -215,7 +215,7 @@ lsof -ti:8000 | xargs kill -9
 │   └── requirements.txt        # ✅ All deps installed
 │
 ├── ios/                        # Swift component files
-│   └── BackendClient.swift    # ✅ IP configured (192.168.8.155)
+│   └── BackendClient.swift    # ✅ set backend URL to YOUR_MAC_IP
 │
 ├── watch/                      # Swift component files
 │   └── MotionManager.swift
@@ -240,11 +240,11 @@ lsof -ti:8000 | xargs kill -9
 - Backend fully configured and tested
 - Database initialized
 - Swing detection algorithm working (189 swings detected)
-- Mac IP configured in iOS client
+- Mac IP placeholder configured in iOS client
 
 **Phase 3: 🔄 PENDING**
 - Need to integrate Swift files into Xcode projects
-- Option A: Use existing TennisSensor project at `/Users/wikiwoo/Documents/WatchProject/TennisSensor/`
+- Option A: Use an existing TennisSensor project at `/path/to/WatchProject/TennisSensor/`
 - Option B: Create new Xcode projects from scratch
 
 **Ready for Real-Time Testing:**

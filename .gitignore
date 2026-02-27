@@ -26,3 +26,5 @@ MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj/xcuserdata/
 
 # Local data artifacts
 Tennis/60shot_session/
+Tennis/frames/**/*.jpg
+Tennis/frames/**/*.png

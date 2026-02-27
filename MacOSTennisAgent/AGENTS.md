@@ -6,13 +6,13 @@ This repo uses a USB-only workflow in v3.3. Data is stored on the iPhone in
 ## Prereqs
 
 - iPhone connected via USB and trusted
-- `pymobiledevice3` available (often in `/Users/blueaz/Python/.venv/bin/`)
+- `pymobiledevice3` available in your active environment (`which pymobiledevice3`)
 
 ## Pull the Database
 
 ```bash
 # Pull the full Documents folder
-/Users/blueaz/Python/.venv/bin/pymobiledevice3 apps pull com.ef.TennisSensor Documents/ /tmp/tennis_docs/
+pymobiledevice3 apps pull com.ef.TennisSensor Documents/ /tmp/tennis_docs/
 
 # Database path after pull
 ls -lh /tmp/tennis_docs/Documents/tennis_watch.db
@@ -24,7 +24,7 @@ This prevents accidental data loss if the phone DB is empty or missing sessions.
 
 ```bash
 # Merge phone DB into USB DB with backup + safety checks
-/Users/blueaz/Python/Mac/MacOSTennisAgent/scripts/merge_watch_db.sh \\
+./scripts/merge_watch_db.sh \\
   /tmp/tennis_docs/Documents/tennis_watch.db \\
   "/Volumes/NO NAME/tennis_watch.db"
 ```
