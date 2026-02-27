@@ -38,7 +38,7 @@ class BackendClient: NSObject, ObservableObject {
     private var urlSession: URLSession?
 
     // Server discovery
-    private let serverIPs = ["192.168.8.140", "192.168.8.170", "192.168.8.108", "127.0.0.1"]
+    private let serverIPs = ["YOUR_MAC_IP", "127.0.0.1"]
     private let serverPort = 8000
 
     // Track accumulated samples from incremental batches

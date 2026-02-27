@@ -92,7 +92,7 @@
 
 - **Real-time Transmission:**
   - Watch → iPhone via WatchConnectivity
-  - iPhone → Backend WebSocket (192.168.8.185:8000)
+  - iPhone → Backend WebSocket (YOUR_MAC_IP:8000)
 
 **Current State:**
 - App Version: v2.5.5 (on Watch), v2.6.2 (development)

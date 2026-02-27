@@ -15,7 +15,7 @@ Tennis sensor data is collected on mobile devices (Android phones), manually exp
 ## Data Source Location
 
 ### Primary Source Folder
-**Path:** `/home/blueaz/Downloads/SensorDownload/Current/`
+**Path:** `/path/to/SensorDownload/Current/`
 
 **Contents:**
 ```
@@ -51,41 +51,41 @@ Golf3.db              # Golf data (not tennis)
 
 #### Source Data
 - **File:** `ztennis.db` (SQLite database)
-- **Location:** `/home/blueaz/Downloads/SensorDownload/Current/ztennis.db`
+- **Location:** `/path/to/SensorDownload/Current/ztennis.db`
 - **Size:** ~200 MB
 - **Tables:**
   - `swings` - Individual swing data (77 columns, 16,715 records)
   - `session_report` - Session summaries (104 records)
 
 #### Import Script
-**Path:** `/home/blueaz/MacOSTennisAgent/backend/scripts/import_zepp_data.py`
+**Path:** `/path/to/MacOSTennisAgent/backend/scripts/import_zepp_data.py`
 
 #### Import Process
 
 **Step 1: Verify Source Database**
 ```bash
 # Check database exists and is readable
-ls -lh /home/blueaz/Downloads/SensorDownload/Current/ztennis.db
+ls -lh /path/to/SensorDownload/Current/ztennis.db
 
 # Verify record count
-sqlite3 /home/blueaz/Downloads/SensorDownload/Current/ztennis.db \
+sqlite3 /path/to/SensorDownload/Current/ztennis.db \
   "SELECT COUNT(*) FROM swings;"
 ```
 
 **Step 2: Run Import Script**
 ```bash
-cd /home/blueaz/MacOSTennisAgent/backend/scripts/
+cd /path/to/MacOSTennisAgent/backend/scripts/
 python import_zepp_data.py
 ```
 
 **Step 3: Verify Import**
 ```bash
 # Check imported session count
-sqlite3 /home/blueaz/MacOSTennisAgent/database/tennis_watch.db \
+sqlite3 /path/to/MacOSTennisAgent/database/tennis_watch.db \
   "SELECT COUNT(*) FROM sessions WHERE device = 'ZeppU';"
 
 # Check imported shot count
-sqlite3 /home/blueaz/MacOSTennisAgent/database/tennis_watch.db \
+sqlite3 /path/to/MacOSTennisAgent/database/tennis_watch.db \
   "SELECT COUNT(*) FROM shots WHERE session_id LIKE 'zepp_%';"
 ```
 
@@ -145,12 +145,12 @@ shots table:
 
 #### Source Data
 - **File:** `BabPopExt.db` (SQLite database)
-- **Location:** `/home/blueaz/Downloads/SensorDownload/Current/BabPopExt.db`
+- **Location:** `/path/to/SensorDownload/Current/BabPopExt.db`
 - **Size:** ~6 MB
 - **Status:** ⚠️ Import script not yet created
 
 #### Import Requirements (Not Yet Implemented)
-**Target:** `/home/blueaz/Python/warrior-tau-bench/domains/TennisAgent/data/unified/tennis_unified.db`
+**Target:** `/path/to/warrior-tau-bench/domains/TennisAgent/data/unified/tennis_unified.db`
 
 **Estimated Workflow:**
 1. Extract session reports from Babolat database
@@ -186,12 +186,12 @@ shots table:
 
 #### Source Data
 - **File:** `WristMotion.csv` (CSV export)
-- **Location:** `/home/blueaz/Downloads/SensorDownload/Current/WristMotion.csv`
+- **Location:** `/path/to/SensorDownload/Current/WristMotion.csv`
 - **Size:** ~26 MB (98,430 samples)
 - **Date:** June 14, 2024 session
 
 #### Import Script
-**Path:** `/home/blueaz/MacOSTennisAgent/backend/scripts/import_wristmotion.py`
+**Path:** `/path/to/MacOSTennisAgent/backend/scripts/import_wristmotion.py`
 **Status:** ⚠️ Development (not production-ready)
 
 #### CSV Format
@@ -224,7 +224,7 @@ time,rotationRateX,rotationRateY,rotationRateZ,accelerationX,accelerationY,accel
 
 #### Source Data
 - **File:** `Activities.csv` (CSV export from Garmin Connect)
-- **Location:** `/home/blueaz/Downloads/SensorDownload/Current/Activities.csv`
+- **Location:** `/path/to/SensorDownload/Current/Activities.csv`
 - **Size:** ~52 KB
 
 #### Import Requirements (Not Yet Implemented)
@@ -252,11 +252,11 @@ Tennis,2024-06-14,false,Tennis Session,0.00,342,01:23:45,142,178,2.1,,,,,,,,,,,,
 
 **Purpose:** Import Zepp U tennis data from ztennis.db
 
-**Location:** `/home/blueaz/MacOSTennisAgent/backend/scripts/import_zepp_data.py`
+**Location:** `/path/to/MacOSTennisAgent/backend/scripts/import_zepp_data.py`
 
 **Usage:**
 ```bash
-cd /home/blueaz/MacOSTennisAgent/backend/scripts/
+cd /path/to/MacOSTennisAgent/backend/scripts/
 python import_zepp_data.py
 ```
 
@@ -268,11 +268,11 @@ python import_zepp_data.py
 - `import_to_tennis_watch()`: Write to target database
 
 **Input:**
-- Source: `/home/blueaz/Downloads/SensorDownload/Current/ztennis.db`
+- Source: `/path/to/SensorDownload/Current/ztennis.db`
 - Tables: `swings`, `session_report`
 
 **Output:**
-- Target: `/home/blueaz/MacOSTennisAgent/database/tennis_watch.db`
+- Target: `/path/to/MacOSTennisAgent/database/tennis_watch.db`
 - Tables: `sessions`, `shots`
 
 **Features:**
@@ -291,13 +291,13 @@ python import_zepp_data.py
 
 **Purpose:** Import SensorLogger CSV data
 
-**Location:** `/home/blueaz/MacOSTennisAgent/backend/scripts/import_wristmotion.py`
+**Location:** `/path/to/MacOSTennisAgent/backend/scripts/import_wristmotion.py`
 
 **Status:** ⚠️ Development (not production)
 
 **Usage:**
 ```bash
-cd /home/blueaz/MacOSTennisAgent/backend/scripts/
+cd /path/to/MacOSTennisAgent/backend/scripts/
 python import_wristmotion.py /path/to/WristMotion.csv
 ```
 
@@ -403,7 +403,7 @@ timestamp_seconds = time / 1_000_000_000
 **Solution:**
 1. Connect Android phone
 2. Navigate to app data directory (requires root)
-3. Copy database to `/home/blueaz/Downloads/SensorDownload/Current/`
+3. Copy database to `/path/to/SensorDownload/Current/`
 4. Verify file permissions: `chmod 644 ztennis.db`
 
 ---
@@ -449,19 +449,19 @@ timestamp_seconds = time / 1_000_000_000
 
 ### Import Zepp U Data
 ```bash
-cd /home/blueaz/MacOSTennisAgent/backend/scripts/
+cd /path/to/MacOSTennisAgent/backend/scripts/
 python import_zepp_data.py
 ```
 
 ### Verify Import
 ```bash
-sqlite3 /home/blueaz/MacOSTennisAgent/database/tennis_watch.db \
+sqlite3 /path/to/MacOSTennisAgent/database/tennis_watch.db \
   "SELECT device, COUNT(*) FROM sessions GROUP BY device;"
 ```
 
 ### Check Latest Sessions
 ```bash
-sqlite3 /home/blueaz/MacOSTennisAgent/database/tennis_watch.db \
+sqlite3 /path/to/MacOSTennisAgent/database/tennis_watch.db \
   "SELECT session_id, date, shot_count FROM sessions ORDER BY date DESC LIMIT 10;"
 ```
 

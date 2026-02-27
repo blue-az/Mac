@@ -26,7 +26,7 @@ xcrun devicectl list devices
 
 ### 3. Open Xcode
 ```bash
-open /Users/wikiwoo/Projects/MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj
+open /path/to/MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj
 ```
 
 ### 4. Configure Xcode

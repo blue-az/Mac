@@ -9,13 +9,13 @@
 ## Database Overview
 
 ### Primary Database: tennis_unified.db
-**Location:** `/home/blueaz/Python/warrior-tau-bench/domains/TennisAgent/data/unified/`
+**Location:** `/path/to/warrior-tau-bench/domains/TennisAgent/data/unified/`
 **Size:** 212 MB
 **Purpose:** Single source of truth for TennisAgent V1-V6 variations
 **Sessions:** 454 total (Babolat: 302, Zepp: 150, AppleWatch: 2)
 
 ### Secondary Database: tennis_watch.db
-**Location:** `/home/blueaz/MacOSTennisAgent/database/`
+**Location:** `/path/to/MacOSTennisAgent/database/`
 **Size:** 14 MB
 **Purpose:** Development database for Apple Watch integration + Zepp U imports
 **Sessions:** 123 total (ZeppU: 117, AppleWatch: 5, SimulatedWatch: 1)

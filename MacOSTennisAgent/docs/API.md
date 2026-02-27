@@ -35,12 +35,12 @@ Connect using standard WebSocket protocol:
 
 ```javascript
 // JavaScript example
-const ws = new WebSocket('ws://192.168.1.100:8000/ws');
+const ws = new WebSocket('ws://YOUR_MAC_IP:8000/ws');
 ```
 
 ```swift
 // Swift example
-let url = URL(string: "ws://192.168.1.100:8000/ws")!
+let url = URL(string: "ws://YOUR_MAC_IP:8000/ws")!
 let task = URLSession.shared.webSocketTask(with: url)
 task.resume()
 ```
@@ -530,7 +530,7 @@ import websockets
 import json
 
 async def test_session():
-    async with websockets.connect('ws://192.168.1.100:8000/ws') as ws:
+    async with websockets.connect('ws://YOUR_MAC_IP:8000/ws') as ws:
         # Start session
         await ws.send(json.dumps({
             "type": "session_start",

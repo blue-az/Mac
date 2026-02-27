@@ -153,7 +153,7 @@ You'll need your Mac's local IP address for the iPhone app.
 1. Open System Preferences
 2. Click Network
 3. Select active connection (WiFi or Ethernet)
-4. Note the IP Address (e.g., `192.168.1.100`)
+4. Note the IP Address (e.g., `YOUR_MAC_IP`)
 
 **Method 2: Terminal**
 ```bash
@@ -183,13 +183,13 @@ open TennisTrackerPhone.xcodeproj
 1. In Xcode, open `BackendClient.swift`
 2. Find this line:
    ```swift
-   private let backendURL = "ws://192.168.1.100:8000/ws"  // CHANGE THIS!
+   private let backendURL = "ws://YOUR_MAC_IP:8000/ws"  // CHANGE THIS!
    ```
-3. Replace `192.168.1.100` with your Mac's IP address from Step 6 above
+3. Replace `YOUR_MAC_IP` with your Mac's IP address from Step 6 above
 
 **Example:**
 ```swift
-private let backendURL = "ws://192.168.1.150:8000/ws"  // Your Mac's IP
+private let backendURL = "ws://YOUR_MAC_IP:8000/ws"  // Your Mac's IP
 ```
 
 ### Step 3: Configure Signing & Capabilities
@@ -284,7 +284,7 @@ nc -zv YOUR_MAC_IP 8000
 **Verify:**
 ```bash
 # On Mac
-ipconfig getifaddr en0  # e.g., 192.168.1.100
+ipconfig getifaddr en0  # e.g., YOUR_MAC_IP
 
 # On iPhone (Settings → WiFi → tap network name)
 # IP should be in same subnet, e.g., 192.168.1.xxx

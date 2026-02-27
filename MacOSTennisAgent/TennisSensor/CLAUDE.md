@@ -438,7 +438,7 @@ Mac Backend (optional backup/sync)
 **Option 2: HTTP Server (Direct Linux Download)**
 ```
 1. On iPhone: Tap "Start HTTP Server"
-2. Note the URL: http://192.168.x.x:8080/tennis_watch.db
+2. Note the URL: http://YOUR_MAC_IP:8080/tennis_watch.db
 3. On Linux:
    wget http://[iphone-ip]:8080/tennis_watch.db
 4. On iPhone: Tap "Stop Server" when done
@@ -549,7 +549,7 @@ CREATE TABLE raw_sensor_buffer (
 **Step 4: HTTP Server Download**
 ```
 1. iPhone: Tap "Start HTTP Server" (purple)
-2. Note URL: http://192.168.x.x:8080/tennis_watch.db
+2. Note URL: http://YOUR_MAC_IP:8080/tennis_watch.db
 3. Linux/Mac: wget http://[ip]:8080/tennis_watch.db
 4. iPhone: Tap "Stop Server" (orange)
 5. Expected: ✅ Database downloaded successfully
