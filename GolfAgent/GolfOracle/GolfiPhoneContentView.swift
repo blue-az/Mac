@@ -9,7 +9,7 @@ struct GolfiPhoneContentView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.blue)
             
-            Text("Golf Oracle Gateway (Rev 3)")
+            Text("Golf Oracle Gateway (Rev 4)")
                 .font(.title)
                 .bold()
             
@@ -31,6 +31,24 @@ struct GolfiPhoneContentView: View {
                     .cornerRadius(10)
             }
             
+            Button(action: {
+                backendClient.downloadSession { data in
+                    if let data = data,
+                       let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let swings = json["swings"] as? [[String: Any]] {
+                        print("📥 Downloaded session: \(swings.count) swings")
+                    }
+                }
+            }) {
+                Text("Download Session")
+                    .bold()
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+
             Text("Keep this app open on your iPhone while golfing to relay sensor data from your Watch to the Mac.")
                 .font(.caption)
                 .foregroundColor(.secondary)

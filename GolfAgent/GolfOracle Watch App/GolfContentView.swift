@@ -13,7 +13,7 @@ struct GolfContentView: View {
                 Circle()
                     .fill(motionManager.isRecording ? Color.green : Color.red)
                     .frame(width: 8, height: 8)
-                Text(motionManager.isRecording ? "LIVE" : "READY (Rev 3)")
+                Text(motionManager.isRecording ? "LIVE" : "READY (Rev 4)")
                     .font(.system(size: 12, weight: .bold))
                 Spacer()
                 Image(systemName: "heart.fill")

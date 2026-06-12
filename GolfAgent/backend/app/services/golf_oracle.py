@@ -84,15 +84,15 @@ class GolfSwingDetector:
             intensity = "LOW" if batch_peak < 8.0 else "MEDIUM" if batch_peak < 15.0 else "HIGH"
             print(f"TRACE: [{intensity}] Batch Peak={batch_peak:.2f} rad/s")
 
-        # Intelligent Threshold: 8.0 rad/s + Rotation Signature Check
-        if batch_peak > 8.0:
+        # Intelligent Threshold: 12.0 rad/s + Rotation Signature Check
+        if batch_peak > 12.0:
             # VERIFICATION 1: Is this a golf swing or just a 'wiggle'?
             # Check for dominant axis (Swing Arc)
             peak_sample = samples[np.argmax(batch_mags)]
             axes = [abs(peak_sample['rotationRateX']), abs(peak_sample['rotationRateY']), abs(peak_sample['rotationRateZ'])]
             dominant_axis = max(axes)
             total_rotation = sum(axes)
-            is_swing_arc = (dominant_axis / total_rotation) > 0.65 # Tightened from 0.60
+            is_swing_arc = (dominant_axis / total_rotation) > 0.45 # Golf swings are 3D; tennis was 0.65
             
             # VERIFICATION 2: Rotational Energy (Area under the curve)
             # A wiggle is high speed but very short. A swing is sustained.

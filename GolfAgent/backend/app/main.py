@@ -1,6 +1,8 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import JSONResponse
 from typing import List, Dict
 import json
+import time
 from app.services.golf_oracle import GolfOracle, GolfSwingDetector
 
 app = FastAPI()
@@ -9,38 +11,43 @@ app = FastAPI()
 oracle = GolfOracle()
 detector = GolfSwingDetector(oracle)
 
+# In-memory session store (latest session only)
+current_session: Dict = {"started_at": None, "swings": []}
+
 @app.websocket("/ws/golf")
 async def websocket_endpoint(websocket: WebSocket):
+    global current_session
     await websocket.accept()
     print("⛳️ Golf Watch connected")
+    current_session = {"started_at": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), "swings": []}
     try:
         while True:
             # Handle both text and binary frames
             message_data = await websocket.receive()
-            
+
             # Check for disconnect
             if message_data["type"] == "websocket.disconnect":
                 print("⛳️ Golf Watch disconnected")
                 break
-                
+
             if "text" in message_data:
                 message = json.loads(message_data["text"])
             elif "bytes" in message_data:
                 message = json.loads(message_data["bytes"])
             else:
                 continue
-            
+
             if message.get("type") == "ping":
                 await websocket.send_json({"type": "pong"})
                 continue
-            
+
             if message.get("type") == "golf_sensor_batch":
                 samples = message.get("samples", [])
                 print(f"📊 Received batch: {len(samples)} samples")
                 swings = detector.process_samples(samples)
-                
+
                 for swing in swings:
-                    # Send detection back to watch/iPhone
+                    current_session["swings"].append(swing)
                     await websocket.send_text(json.dumps({
                         "type": "golf_swing_detected",
                         "swing": swing
@@ -49,6 +56,11 @@ async def websocket_endpoint(websocket: WebSocket):
 
     except WebSocketDisconnect:
         print("⛳️ Golf Watch disconnected")
+
+
+@app.get("/sessions/latest")
+async def get_latest_session():
+    return JSONResponse(content=current_session)
 
 @app.post("/phoenix-gps-status")
 async def update_gps_status(metrics: Dict):
