@@ -15,11 +15,11 @@ struct TennisSensorApp: App {
         // CRITICAL: Force BackendClient initialization IMMEDIATELY at app launch
         // to prevent lazy initialization race condition where WatchConnectivity data
         // arrives before the delegate is set
-        NSLog("⚡️ TENNISSENSORAPP v2.5.1 INIT STARTING ⚡️")
+        NSLog("⚡️ TENNISSENSORAPP v5.1.0 INIT STARTING ⚡️")
         print("🚀 App launching, forcing BackendClient initialization...")
         _ = BackendClient.shared
         print("✅ BackendClient.shared initialized at app launch")
-        NSLog("⚡️ TENNISSENSORAPP v2.5.1 INIT COMPLETE ⚡️")
+        NSLog("⚡️ TENNISSENSORAPP v5.1.0 INIT COMPLETE ⚡️")
     }
 
     var body: some Scene {

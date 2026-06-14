@@ -18,11 +18,13 @@ class MotionManager: NSObject, ObservableObject {
     @Published var sampleCount = 0
     @Published var sessionDuration: TimeInterval = 0
     @Published var workoutSessionActive = false
+    @Published var storedSessionCount: Int = 0
 
     private var activeSessionId: String?
     private var sessionStartTime: Date?
     private var sampleBuffer: [SensorSample] = []
     private var lastSentCount = 0
+    private var batchCount = 0
     // Send incremental batches every N samples for reliability
     private let batchSize = 100
     private let heartbeatInterval: TimeInterval = 30
@@ -64,11 +66,14 @@ class MotionManager: NSObject, ObservableObject {
         // Reset state
         sampleCount = 0
         lastSentCount = 0
+        batchCount = 0
         sampleBuffer.removeAll()
         sessionStartTime = Date()
         activeSessionId = sessionId
         lastSampleTime = 0  // v2.7: Reset throttling
         isRecording = true
+
+        WatchLocalDatabase.shared.createSession(sessionId: sessionId, startTime: Date())
         startHeartbeatTimer(sessionId: sessionId)
 
         // Configure motion manager
@@ -197,8 +202,16 @@ class MotionManager: NSObject, ObservableObject {
         // updateApplicationContext OVERWRITES previous context - only last batch survives!
         // transferUserInfo QUEUES messages - all batches delivered in order
         session.transferUserInfo(batchMessage)
+
+        let currentBatchIndex = batchCount
+        batchCount += 1
         lastSentCount = sampleCount
         print("📤 Sent incremental batch: \(samplesData.count) samples (total: \(sampleCount))")
+
+        WatchLocalDatabase.shared.saveBatch(
+            sessionId: sessionId, batchIndex: currentBatchIndex,
+            samples: samplesData, isFinal: false
+        ) { [weak self] in self?.refreshStoredCount() }
     }
 
     private func sendCompleteSessionToPhone() {
@@ -259,6 +272,13 @@ class MotionManager: NSObject, ObservableObject {
             session.transferUserInfo(finalBatchMessage)
             print("✅ transferUserInfo called successfully (final batch)")
             os_log("✅ transferUserInfo called successfully (final batch)", log: logger, type: .info)
+
+            let finalBatchIndex = batchCount
+            batchCount += 1
+            WatchLocalDatabase.shared.saveBatch(
+                sessionId: sessionId, batchIndex: finalBatchIndex,
+                samples: samplesData, isFinal: true
+            ) { [weak self] in self?.refreshStoredCount() }
         } else {
             print("✅ All samples already sent incrementally")
         }
@@ -266,6 +286,7 @@ class MotionManager: NSObject, ObservableObject {
         // Clear buffer after session ends
         sampleBuffer.removeAll()
         lastSentCount = 0
+        batchCount = 0
     }
 
     // MARK: - Heartbeat
@@ -294,6 +315,47 @@ class MotionManager: NSObject, ObservableObject {
     private func stopHeartbeatTimer() {
         heartbeatTimer?.cancel()
         heartbeatTimer = nil
+    }
+
+    // MARK: - Local Storage
+
+    func refreshStoredCount() {
+        storedSessionCount = WatchLocalDatabase.shared.getUnsentSessionCount()
+    }
+
+    func resendStoredSessions() {
+        let wcSession = WCSession.default
+        guard wcSession.activationState == .activated else {
+            print("⚠️ WCSession not activated, cannot resend")
+            return
+        }
+
+        let sessions = WatchLocalDatabase.shared.getUnsentSessions()
+        guard !sessions.isEmpty else { return }
+
+        print("🔄 Resending \(sessions.count) stored session(s)...")
+        for (sessionId, _, sampleCount) in sessions {
+            let batches = WatchLocalDatabase.shared.getBatchesForSession(sessionId)
+            print("   Session \(sessionId): \(batches.count) batches, \(sampleCount) samples")
+            for (batchIndex, samples, isFinal) in batches {
+                let message: [String: Any] = [
+                    "type": "incremental_batch",
+                    "session_id": sessionId,
+                    "device": "AppleWatch",
+                    "samples": samples,
+                    "batch_start_index": batchIndex * batchSize,
+                    "total_samples_so_far": (batchIndex + 1) * samples.count,
+                    "is_final": isFinal
+                ]
+                wcSession.transferUserInfo(message)
+            }
+            WatchLocalDatabase.shared.markSessionTransferred(sessionId)
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.refreshStoredCount()
+        }
+        print("✅ Resend queued for \(sessions.count) session(s)")
     }
 }
 

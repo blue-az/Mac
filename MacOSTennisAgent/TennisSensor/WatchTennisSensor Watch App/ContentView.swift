@@ -32,7 +32,7 @@ struct ContentView: View {
                     .font(.system(size: 20))
                     .foregroundStyle(motionManager.isRecording ? .green : .gray)
 
-                Text("TT v4.0.0")
+                Text("TT v4.1.0")
                     .font(.system(size: 14))
                     .fontWeight(.bold)
             }
@@ -151,6 +151,29 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
                 }
+
+                // Resend Button - appears when sessions are stored locally but not yet delivered
+                if motionManager.storedSessionCount > 0 && !motionManager.isRecording {
+                    Button(action: {
+                        motionManager.resendStoredSessions()
+                        WKInterfaceDevice.current().play(.click)
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.up.circle.fill")
+                                .font(.system(size: 22))
+
+                            Text("Resend (\(motionManager.storedSessionCount))")
+                                .font(.system(size: 13))
+                                .fontWeight(.bold)
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color.orange)
+                        .cornerRadius(10)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
 
             // WC Status
@@ -177,6 +200,7 @@ struct ContentView: View {
         .padding(.vertical, 8)
         .onAppear {
             checkWCSession()
+            motionManager.refreshStoredCount()
         }
         .onChange(of: scenePhase) { _, newPhase in
             DebugEventSender.send(

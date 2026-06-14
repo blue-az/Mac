@@ -2,7 +2,7 @@ import Foundation
 import WatchConnectivity
 import UIKit
 
-class TennisBackendClient: NSObject, ObservableObject {
+class GolfBackendClient: NSObject, ObservableObject {
     @Published var isConnected = false
 
     private var webSocketTask: URLSessionWebSocketTask?
@@ -10,7 +10,7 @@ class TennisBackendClient: NSObject, ObservableObject {
     private var keepaliveTimer: Timer?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
 
-    private let backendURL = "ws://192.168.8.172:8002/ws/tennis"
+    private let backendURL = "ws://192.168.8.172:8001/ws/golf"
 
     override init() {
         super.init()
@@ -18,20 +18,33 @@ class TennisBackendClient: NSObject, ObservableObject {
             WCSession.default.delegate = self
             WCSession.default.activate()
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground),
+                                               name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground),
+                                               name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+
+    @objc private func appDidEnterBackground() {
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "GolfGateway") { [weak self] in
+            self?.endBackgroundTask()
+        }
+    }
+
+    @objc private func appWillEnterForeground() {
+        endBackgroundTask()
+        if !isConnected { connect() }
+    }
+
+    private func endBackgroundTask() {
+        guard backgroundTask != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(backgroundTask)
+        backgroundTask = .invalid
     }
 
     func connect() {
-        print("🔌 Connecting to Tennis Oracle...")
+        print("🔌 Connecting to Mac...")
         guard let url = URL(string: backendURL) else { return }
-
-        keepaliveTimer?.invalidate()
         webSocketTask?.cancel()
-
-        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "TennisOracleWS") {
-            UIApplication.shared.endBackgroundTask(self.backgroundTask)
-            self.backgroundTask = .invalid
-        }
-
         webSocketTask = urlSession.webSocketTask(with: url)
         webSocketTask?.resume()
         receiveMessage()
@@ -45,18 +58,6 @@ class TennisBackendClient: NSObject, ObservableObject {
                     print("❌ Ping failed: \(error!.localizedDescription)")
                 }
             }
-        }
-    }
-
-    func disconnect() {
-        keepaliveTimer?.invalidate()
-        keepaliveTimer = nil
-        webSocketTask?.cancel(with: .normalClosure, reason: nil)
-        webSocketTask = nil
-        DispatchQueue.main.async { self.isConnected = false }
-        if backgroundTask != .invalid {
-            UIApplication.shared.endBackgroundTask(backgroundTask)
-            backgroundTask = .invalid
         }
     }
 
@@ -75,6 +76,14 @@ class TennisBackendClient: NSObject, ObservableObject {
         }
     }
 
+    func downloadSession(completion: @escaping (Data?) -> Void) {
+        guard let url = URL(string: backendURL.replacingOccurrences(of: "ws://", with: "http://")
+                                              .replacingOccurrences(of: "/ws/golf", with: "/sessions/latest")) else {
+            completion(nil); return
+        }
+        URLSession.shared.dataTask(with: url) { data, _, _ in completion(data) }.resume()
+    }
+
     private func receiveMessage() {
         webSocketTask?.receive { [weak self] result in
             switch result {
@@ -88,11 +97,8 @@ class TennisBackendClient: NSObject, ObservableObject {
                     break
                 }
                 self?.receiveMessage()
-
             case .failure(let error):
-                let nsError = error as NSError
-                guard nsError.code != NSURLErrorCancelled else { return }
-                print("❌ Connection lost: \(error.localizedDescription)")
+                print("❌ connection lost: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self?.isConnected = false
                     self?.keepaliveTimer?.invalidate()
@@ -105,41 +111,29 @@ class TennisBackendClient: NSObject, ObservableObject {
     }
 
     private func handlePayload(_ data: Data) {
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let type = json["type"] as? String,
-              type == "tennis_shot_detected" else { return }
-
-        if WCSession.default.isReachable {
-            WCSession.default.sendMessage(json, replyHandler: nil)
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let type = json["type"] as? String, type == "golf_swing_detected" {
+            // Forward back to Watch for Haptics/UI
+            if WCSession.default.isReachable {
+                WCSession.default.sendMessage(json, replyHandler: nil)
+            }
         }
     }
 }
 
-extension TennisBackendClient: WCSessionDelegate {
+extension GolfBackendClient: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {}
     func sessionDidBecomeInactive(_ session: WCSession) {}
     func sessionDidDeactivate(_ session: WCSession) {}
 
-    func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-        if message["type"] as? String == "tennis_sensor_batch" {
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+        if message["type"] as? String == "golf_sensor_batch" {
             sendToMac(message)
         }
     }
-
-    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
-        if userInfo["type"] as? String == "tennis_sensor_batch" {
-            sendToMac(userInfo)
-        }
-    }
-
+    
     private func sendToMac(_ dict: [String: Any]) {
-        guard isConnected,
-              let data = try? JSONSerialization.data(withJSONObject: dict),
-              let text = String(data: data, encoding: .utf8) else { return }
-        webSocketTask?.send(.string(text)) { error in
-            if let error = error {
-                print("❌ Send error: \(error.localizedDescription)")
-            }
-        }
+        guard isConnected, let data = try? JSONSerialization.data(withJSONObject: dict) else { return }
+        webSocketTask?.send(.data(data)) { _ in }
     }
 }

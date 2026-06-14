@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0038D2792FA955A50079771E /* GolfOracle Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 0038D2782FA955A50079771E /* GolfOracle Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C585733C2DC34FEF00EA0748 /* WatchTennisSensor Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C58573322DC34FED00EA0748 /* WatchTennisSensor Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AB0000022EC878500CA77602 /* libsqlite3.tbd (watchOS) in Frameworks */ = {isa = PBXBuildFile; fileRef = AB0000012EC878500CA77601 /* libsqlite3.tbd (watchOS) */; };
 		C5F6880B2ECC878500CA7763 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C5F6880A2ECC878500CA7763 /* libsqlite3.tbd */; };
 		C5F6880D2ECC879900CA7763 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C5F6880C2ECC879900CA7763 /* libz.tbd */; };
 		C5F6880F2ECC87B400CA7763 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5F6880E2ECC87B400CA7763 /* Network.framework */; };
@@ -21,6 +23,41 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0038D2632FA955A50079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D2552FA955A20079771E;
+			remoteInfo = GolfOracle;
+		};
+		0038D26D2FA955A50079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D2552FA955A20079771E;
+			remoteInfo = GolfOracle;
+		};
+		0038D27A2FA955A50079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D2772FA955A50079771E;
+			remoteInfo = "GolfOracle Watch App";
+		};
+		0038D2882FA955A70079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D2772FA955A50079771E;
+			remoteInfo = "GolfOracle Watch App";
+		};
+		0038D2922FA955A70079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D2772FA955A50079771E;
+			remoteInfo = "GolfOracle Watch App";
+		};
 		C529BB822DC33A0500C29594 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C529BB6B2DC33A0100C29594 /* Project object */;
@@ -45,6 +82,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0038D29B2FA955A70079771E /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				0038D2792FA955A50079771E /* GolfOracle Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C58573402DC34FEF00EA0748 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -59,10 +107,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0038D2562FA955A20079771E /* GolfOracle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GolfOracle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D2622FA955A50079771E /* GolfOracleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GolfOracleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D26C2FA955A50079771E /* GolfOracleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GolfOracleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D2782FA955A50079771E /* GolfOracle Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GolfOracle Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D2872FA955A70079771E /* GolfOracle Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GolfOracle Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D2912FA955A70079771E /* GolfOracle Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GolfOracle Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C529BB732DC33A0100C29594 /* TennisSensor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TennisSensor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C529BB812DC33A0500C29594 /* TennisSensorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TennisSensorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C529BB8B2DC33A0500C29594 /* TennisSensorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TennisSensorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C58573322DC34FED00EA0748 /* WatchTennisSensor Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchTennisSensor Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB0000012EC878500CA77601 /* libsqlite3.tbd (watchOS) */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		C5F6880A2ECC878500CA7763 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.4.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		C5F6880C2ECC879900CA7763 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.4.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		C5F6880E2ECC87B400CA7763 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.4.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
@@ -77,6 +132,36 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0038D2572FA955A20079771E /* GolfOracle */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GolfOracle;
+			sourceTree = "<group>";
+		};
+		0038D2652FA955A50079771E /* GolfOracleTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GolfOracleTests;
+			sourceTree = "<group>";
+		};
+		0038D26F2FA955A50079771E /* GolfOracleUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GolfOracleUITests;
+			sourceTree = "<group>";
+		};
+		0038D27C2FA955A50079771E /* GolfOracle Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "GolfOracle Watch App";
+			sourceTree = "<group>";
+		};
+		0038D28A2FA955A70079771E /* GolfOracle Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "GolfOracle Watch AppTests";
+			sourceTree = "<group>";
+		};
+		0038D2942FA955A70079771E /* GolfOracle Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "GolfOracle Watch AppUITests";
+			sourceTree = "<group>";
+		};
 		C529BB752DC33A0100C29594 /* TennisSensor */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = TennisSensor;
@@ -105,6 +190,48 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0038D2532FA955A20079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D25F2FA955A50079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2692FA955A50079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2752FA955A50079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2842FA955A70079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D28E2FA955A70079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C529BB702DC33A0100C29594 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -133,6 +260,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB0000022EC878500CA77602 /* libsqlite3.tbd (watchOS) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +276,12 @@
 				C529BB8E2DC33A0500C29594 /* TennisSensorUITests */,
 				C58573332DC34FED00EA0748 /* WatchTennisSensor Watch App */,
 				C58573462DC3597600EA0748 /* WatchTennisSensor */,
+				0038D2572FA955A20079771E /* GolfOracle */,
+				0038D2652FA955A50079771E /* GolfOracleTests */,
+				0038D26F2FA955A50079771E /* GolfOracleUITests */,
+				0038D27C2FA955A50079771E /* GolfOracle Watch App */,
+				0038D28A2FA955A70079771E /* GolfOracle Watch AppTests */,
+				0038D2942FA955A70079771E /* GolfOracle Watch AppUITests */,
 				C529BB742DC33A0100C29594 /* Products */,
 				C5F688092ECC878500CA7763 /* Frameworks */,
 			);
@@ -160,6 +294,12 @@
 				C529BB812DC33A0500C29594 /* TennisSensorTests.xctest */,
 				C529BB8B2DC33A0500C29594 /* TennisSensorUITests.xctest */,
 				C58573322DC34FED00EA0748 /* WatchTennisSensor Watch App.app */,
+				0038D2562FA955A20079771E /* GolfOracle.app */,
+				0038D2622FA955A50079771E /* GolfOracleTests.xctest */,
+				0038D26C2FA955A50079771E /* GolfOracleUITests.xctest */,
+				0038D2782FA955A50079771E /* GolfOracle Watch App.app */,
+				0038D2872FA955A70079771E /* GolfOracle Watch AppTests.xctest */,
+				0038D2912FA955A70079771E /* GolfOracle Watch AppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -192,6 +332,144 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0038D2552FA955A20079771E /* GolfOracle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D2A72FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracle" */;
+			buildPhases = (
+				0038D2522FA955A20079771E /* Sources */,
+				0038D2532FA955A20079771E /* Frameworks */,
+				0038D2542FA955A20079771E /* Resources */,
+				0038D29B2FA955A70079771E /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D27B2FA955A50079771E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0038D2572FA955A20079771E /* GolfOracle */,
+			);
+			name = GolfOracle;
+			packageProductDependencies = (
+			);
+			productName = GolfOracle;
+			productReference = 0038D2562FA955A20079771E /* GolfOracle.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0038D2612FA955A50079771E /* GolfOracleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D2A82FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracleTests" */;
+			buildPhases = (
+				0038D25E2FA955A50079771E /* Sources */,
+				0038D25F2FA955A50079771E /* Frameworks */,
+				0038D2602FA955A50079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D2642FA955A50079771E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0038D2652FA955A50079771E /* GolfOracleTests */,
+			);
+			name = GolfOracleTests;
+			packageProductDependencies = (
+			);
+			productName = GolfOracleTests;
+			productReference = 0038D2622FA955A50079771E /* GolfOracleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0038D26B2FA955A50079771E /* GolfOracleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D2A92FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracleUITests" */;
+			buildPhases = (
+				0038D2682FA955A50079771E /* Sources */,
+				0038D2692FA955A50079771E /* Frameworks */,
+				0038D26A2FA955A50079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D26E2FA955A50079771E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0038D26F2FA955A50079771E /* GolfOracleUITests */,
+			);
+			name = GolfOracleUITests;
+			packageProductDependencies = (
+			);
+			productName = GolfOracleUITests;
+			productReference = 0038D26C2FA955A50079771E /* GolfOracleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		0038D2772FA955A50079771E /* GolfOracle Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D2A62FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracle Watch App" */;
+			buildPhases = (
+				0038D2742FA955A50079771E /* Sources */,
+				0038D2752FA955A50079771E /* Frameworks */,
+				0038D2762FA955A50079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0038D27C2FA955A50079771E /* GolfOracle Watch App */,
+			);
+			name = "GolfOracle Watch App";
+			packageProductDependencies = (
+			);
+			productName = "GolfOracle Watch App";
+			productReference = 0038D2782FA955A50079771E /* GolfOracle Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0038D2862FA955A70079771E /* GolfOracle Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D2AA2FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracle Watch AppTests" */;
+			buildPhases = (
+				0038D2832FA955A70079771E /* Sources */,
+				0038D2842FA955A70079771E /* Frameworks */,
+				0038D2852FA955A70079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D2892FA955A70079771E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0038D28A2FA955A70079771E /* GolfOracle Watch AppTests */,
+			);
+			name = "GolfOracle Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "GolfOracle Watch AppTests";
+			productReference = 0038D2872FA955A70079771E /* GolfOracle Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0038D2902FA955A70079771E /* GolfOracle Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D2AB2FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracle Watch AppUITests" */;
+			buildPhases = (
+				0038D28D2FA955A70079771E /* Sources */,
+				0038D28E2FA955A70079771E /* Frameworks */,
+				0038D28F2FA955A70079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D2932FA955A70079771E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0038D2942FA955A70079771E /* GolfOracle Watch AppUITests */,
+			);
+			name = "GolfOracle Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "GolfOracle Watch AppUITests";
+			productReference = 0038D2912FA955A70079771E /* GolfOracle Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		C529BB722DC33A0100C29594 /* TennisSensor */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C529BB952DC33A0500C29594 /* Build configuration list for PBXNativeTarget "TennisSensor" */;
@@ -294,6 +572,28 @@
 				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
+					0038D2552FA955A20079771E = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					0038D2612FA955A50079771E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 0038D2552FA955A20079771E;
+					};
+					0038D26B2FA955A50079771E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 0038D2552FA955A20079771E;
+					};
+					0038D2772FA955A50079771E = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					0038D2862FA955A70079771E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 0038D2772FA955A50079771E;
+					};
+					0038D2902FA955A70079771E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 0038D2772FA955A50079771E;
+					};
 					C529BB722DC33A0100C29594 = {
 						CreatedOnToolsVersion = 16.3;
 					};
@@ -328,11 +628,59 @@
 				C529BB802DC33A0500C29594 /* TennisSensorTests */,
 				C529BB8A2DC33A0500C29594 /* TennisSensorUITests */,
 				C58573312DC34FED00EA0748 /* WatchTennisSensor Watch App */,
+				0038D2552FA955A20079771E /* GolfOracle */,
+				0038D2612FA955A50079771E /* GolfOracleTests */,
+				0038D26B2FA955A50079771E /* GolfOracleUITests */,
+				0038D2772FA955A50079771E /* GolfOracle Watch App */,
+				0038D2862FA955A70079771E /* GolfOracle Watch AppTests */,
+				0038D2902FA955A70079771E /* GolfOracle Watch AppUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0038D2542FA955A20079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2602FA955A50079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D26A2FA955A50079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2762FA955A50079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2852FA955A70079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D28F2FA955A70079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C529BB712DC33A0100C29594 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -365,6 +713,48 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0038D2522FA955A20079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D25E2FA955A50079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2682FA955A50079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2742FA955A50079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D2832FA955A70079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D28D2FA955A70079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C529BB6F2DC33A0100C29594 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -402,6 +792,31 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0038D2642FA955A50079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D2552FA955A20079771E /* GolfOracle */;
+			targetProxy = 0038D2632FA955A50079771E /* PBXContainerItemProxy */;
+		};
+		0038D26E2FA955A50079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D2552FA955A20079771E /* GolfOracle */;
+			targetProxy = 0038D26D2FA955A50079771E /* PBXContainerItemProxy */;
+		};
+		0038D27B2FA955A50079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D2772FA955A50079771E /* GolfOracle Watch App */;
+			targetProxy = 0038D27A2FA955A50079771E /* PBXContainerItemProxy */;
+		};
+		0038D2892FA955A70079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D2772FA955A50079771E /* GolfOracle Watch App */;
+			targetProxy = 0038D2882FA955A70079771E /* PBXContainerItemProxy */;
+		};
+		0038D2932FA955A70079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D2772FA955A50079771E /* GolfOracle Watch App */;
+			targetProxy = 0038D2922FA955A70079771E /* PBXContainerItemProxy */;
+		};
 		C529BB832DC33A0500C29594 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C529BB722DC33A0100C29594 /* TennisSensor */;
@@ -420,6 +835,276 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0038D2992FA955A70079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GolfOracle;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.GolfOracle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0038D29A2FA955A70079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GolfOracle;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.GolfOracle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0038D29C2FA955A70079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.GolfOracleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GolfOracle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GolfOracle";
+			};
+			name = Debug;
+		};
+		0038D29D2FA955A70079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.GolfOracleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GolfOracle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GolfOracle";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0038D29E2FA955A70079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.GolfOracleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = GolfOracle;
+			};
+			name = Debug;
+		};
+		0038D29F2FA955A70079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.GolfOracleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = GolfOracle;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0038D2A02FA955A70079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GolfOracle;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = WatchApps.GolfOracle;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.GolfOracle.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		0038D2A12FA955A70079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GolfOracle;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = WatchApps.GolfOracle;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.GolfOracle.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
+		0038D2A22FA955A70079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "WatchApps.GolfOracle-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GolfOracle Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GolfOracle Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		0038D2A32FA955A70079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "WatchApps.GolfOracle-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GolfOracle Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GolfOracle Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
+		0038D2A42FA955A70079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "WatchApps.GolfOracle-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "GolfOracle Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		0038D2A52FA955A70079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "WatchApps.GolfOracle-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "GolfOracle Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
 		C529BB932DC33A0500C29594 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -723,8 +1408,8 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Tennis Sensor can record audio during sessions for stroke analysis when enabled.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to motion sensors to detect and analyze your tennis swings in real-time.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ef.TennisSensor;
-				INFOPLIST_KEY_WKBackgroundModes = workout-processing;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -758,8 +1443,8 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Tennis Sensor can record audio during sessions for stroke analysis when enabled.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to motion sensors to detect and analyze your tennis swings in real-time.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.ef.TennisSensor;
-				INFOPLIST_KEY_WKBackgroundModes = workout-processing;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -780,6 +1465,60 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0038D2A62FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracle Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D2A02FA955A70079771E /* Debug */,
+				0038D2A12FA955A70079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D2A72FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D2992FA955A70079771E /* Debug */,
+				0038D29A2FA955A70079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D2A82FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D29C2FA955A70079771E /* Debug */,
+				0038D29D2FA955A70079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D2A92FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D29E2FA955A70079771E /* Debug */,
+				0038D29F2FA955A70079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D2AA2FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracle Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D2A22FA955A70079771E /* Debug */,
+				0038D2A32FA955A70079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D2AB2FA955A70079771E /* Build configuration list for PBXNativeTarget "GolfOracle Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D2A42FA955A70079771E /* Debug */,
+				0038D2A52FA955A70079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C529BB6E2DC33A0100C29594 /* Build configuration list for PBXProject "TennisSensor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

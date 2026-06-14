@@ -13,6 +13,10 @@ struct TennisiPhoneContentView: View {
             Text("Tennis Oracle Gateway")
                 .font(.title)
                 .bold()
+
+            Text("v1.1.0")
+                .font(.caption)
+                .foregroundColor(.secondary)
             
             StatusRow(
                 label: "Mac Backend",
