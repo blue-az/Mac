@@ -1,6 +1,7 @@
 import CoreMotion
 import WatchConnectivity
 import HealthKit
+import WatchKit
 
 class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     private let motionManager = CMMotionManager()
@@ -11,6 +12,12 @@ class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     @Published var isRecording = false
     @Published var heartRate: Double = 0
 
+    @Published var lastSwingMph: Double = 0
+    @Published var lastSwingReadiness: Double = 100
+    @Published var lastSwingFatigued: Bool = false
+    @Published var swingCount: Int = 0
+
+    private var localHapticCooldownUntil: Date = .distantPast
     private var sessionStartTime: Date?
     private var sampleBuffer: [GolfSensorSample] = []
     private let batchSize = 50 // Smaller batches for lower latency
@@ -31,9 +38,26 @@ class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     }
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
-        // Handle swing detection feedback from Mac (via iPhone)
         if message["type"] as? String == "golf_swing_detected" {
-            NotificationCenter.default.post(name: NSNotification.Name("GolfSwingDetected"), object: nil, userInfo: message)
+            applySwing(message)
+        }
+    }
+
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
+        if userInfo["type"] as? String == "golf_swing_detected" {
+            applySwing(userInfo)
+        }
+    }
+
+    private func applySwing(_ message: [String: Any]) {
+        guard let swing = message["swing"] as? [String: Any],
+              let metrics = swing["metrics"] as? [String: Any],
+              let flags = swing["flags"] as? [String: Any] else { return }
+        DispatchQueue.main.async {
+            self.lastSwingMph = metrics["impact_speed_mph"] as? Double ?? 0
+            self.lastSwingReadiness = metrics["readiness_pct"] as? Double ?? 100
+            self.lastSwingFatigued = flags["micro_fatigue"] as? Bool ?? false
+            self.swingCount += 1
         }
     }
 
@@ -108,6 +132,21 @@ class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     }
 
     private func sendBatch() {
+        let mags = sampleBuffer.map {
+            sqrt($0.rotationRateX * $0.rotationRateX +
+                 $0.rotationRateY * $0.rotationRateY +
+                 $0.rotationRateZ * $0.rotationRateZ)
+        }
+        if let peak = mags.max(), peak > 12.0, Date() > localHapticCooldownUntil {
+            localHapticCooldownUntil = Date().addingTimeInterval(1.5)
+            DispatchQueue.main.async {
+                self.lastSwingMph = peak * 2.5 * 1.4
+                self.lastSwingFatigued = false
+                self.swingCount += 1
+                WKInterfaceDevice.current().play(.success)
+            }
+        }
+
         let samplesData = sampleBuffer.map { $0.toDictionary() }
         let message: [String: Any] = [
             "type": "golf_sensor_batch",
