@@ -14,7 +14,7 @@ struct TennisiPhoneContentView: View {
                 .font(.title)
                 .bold()
 
-            Text("v1.1.0")
+            Text("v1.7.0")
                 .font(.caption)
                 .foregroundColor(.secondary)
             
@@ -22,6 +22,12 @@ struct TennisiPhoneContentView: View {
                 label: "Mac Backend",
                 status: backendClient.isConnected ? "Connected" : "Disconnected",
                 color: backendClient.isConnected ? .green : .red
+            )
+
+            StatusRow(
+                label: "Watch Batches",
+                status: "\(backendClient.wcBatchesReceived)",
+                color: backendClient.wcBatchesReceived > 0 ? .green : .secondary
             )
             
             Button(action: {

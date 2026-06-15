@@ -1,1 +1,0 @@
-To change the app icon, please provide a PNG file (1024x1024) and I will help you set it up in Xcode's Assets.xcassets.

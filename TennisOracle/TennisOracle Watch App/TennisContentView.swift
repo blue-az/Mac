@@ -2,10 +2,6 @@ import SwiftUI
 
 struct TennisContentView: View {
     @StateObject private var motionManager = TennisMotionManager()
-    @State private var lastShotMph: Double = 0
-    @State private var readiness: Double = 100
-    @State private var isFatigued = false
-    @State private var cleanContact = true
 
     var body: some View {
         VStack(spacing: 5) {
@@ -16,7 +12,7 @@ struct TennisContentView: View {
                     .frame(width: 8, height: 8)
                 Text(motionManager.isRecording ? "LIVE" : "READY")
                     .font(.system(size: 10, weight: .bold))
-                Text("v1.1")
+                Text("v2.0")
                     .font(.system(size: 8))
                     .foregroundColor(.secondary)
                 Spacer()
@@ -53,7 +49,7 @@ struct TennisContentView: View {
                 Text(motionManager.mode == .serve ? "SERVE SPEED" : "SHOT SPEED")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(.secondary)
-                Text(String(format: "%.1f", lastShotMph))
+                Text(String(format: "%.1f", motionManager.lastShotMph))
                     .font(.system(size: 30, weight: .black, design: .rounded))
                 Text("MPH")
                     .font(.system(size: 10, weight: .bold))
@@ -62,18 +58,18 @@ struct TennisContentView: View {
             // Readiness / Fatigue Indicator
             VStack(spacing: 2) {
                 HStack {
-                    Text(cleanContact ? "CLEAN CONTACT" : "OFF-CENTER")
-                        .foregroundColor(cleanContact ? .primary : .orange)
+                    Text(motionManager.lastShotCleanContact ? "CLEAN CONTACT" : "OFF-CENTER")
+                        .foregroundColor(motionManager.lastShotCleanContact ? .primary : .orange)
                     Spacer()
-                    Text("\(Int(readiness))%")
+                    Text("\(Int(motionManager.lastShotReadiness))%")
                 }
                 .font(.system(size: 9, weight: .bold))
 
-                ProgressView(value: readiness, total: 100)
-                    .accentColor(isFatigued ? .yellow : .green)
+                ProgressView(value: motionManager.lastShotReadiness, total: 100)
+                    .accentColor(motionManager.lastShotFatigued ? .yellow : .green)
             }
             .padding(.horizontal, 5)
-            .background(isFatigued ? Color.yellow.opacity(0.2) : Color.clear)
+            .background(motionManager.lastShotFatigued ? Color.yellow.opacity(0.2) : Color.clear)
             .cornerRadius(8)
 
             // Control Button
@@ -92,24 +88,13 @@ struct TennisContentView: View {
             .buttonStyle(.borderedProminent)
             .frame(height: 35)
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("TennisShotDetected"))) { notification in
-            if let shot = notification.userInfo?["shot"] as? [String: Any],
-               let metrics = shot["metrics"] as? [String: Any],
-               let flags = shot["flags"] as? [String: Any] {
-                
-                self.lastShotMph = metrics["speed_mph"] as? Double ?? 0
-                self.readiness = metrics["readiness_pct"] as? Double ?? 100
-                self.isFatigued = flags["micro_fatigue"] as? Bool ?? false
-                self.cleanContact = flags["clean_contact"] as? Bool ?? true
-                
-                // Haptic Feedback
-                if !cleanContact {
-                    WKInterfaceDevice.current().play(.failure)
-                } else if isFatigued {
-                    WKInterfaceDevice.current().play(.directionUp)
-                } else {
-                    WKInterfaceDevice.current().play(.success)
-                }
+        .onChange(of: motionManager.shotCount) { _ in
+            if !motionManager.lastShotCleanContact {
+                WKInterfaceDevice.current().play(.failure)
+            } else if motionManager.lastShotFatigued {
+                WKInterfaceDevice.current().play(.directionUp)
+            } else {
+                WKInterfaceDevice.current().play(.success)
             }
         }
     }

@@ -1,0 +1,938 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0038D4AD2FA9DAE70079771E /* TennisOracle Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 0038D4AC2FA9DAE70079771E /* TennisOracle Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0038D4972FA9DAE70079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0038D4812FA9DAE30079771E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D4882FA9DAE30079771E;
+			remoteInfo = TennisOracle;
+		};
+		0038D4A12FA9DAE70079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0038D4812FA9DAE30079771E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D4882FA9DAE30079771E;
+			remoteInfo = TennisOracle;
+		};
+		0038D4AE2FA9DAE70079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0038D4812FA9DAE30079771E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D4AB2FA9DAE70079771E;
+			remoteInfo = "TennisOracle Watch App";
+		};
+		0038D4BC2FA9DAE90079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0038D4812FA9DAE30079771E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D4AB2FA9DAE70079771E;
+			remoteInfo = "TennisOracle Watch App";
+		};
+		0038D4C62FA9DAEA0079771E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0038D4812FA9DAE30079771E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038D4AB2FA9DAE70079771E;
+			remoteInfo = "TennisOracle Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0038D4D22FA9DAEA0079771E /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				0038D4AD2FA9DAE70079771E /* TennisOracle Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0038D4892FA9DAE30079771E /* TennisOracle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TennisOracle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D4962FA9DAE70079771E /* TennisOracleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TennisOracleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D4A02FA9DAE70079771E /* TennisOracleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TennisOracleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D4AC2FA9DAE70079771E /* TennisOracle Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TennisOracle Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D4BB2FA9DAE90079771E /* TennisOracle Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TennisOracle Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038D4C52FA9DAEA0079771E /* TennisOracle Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TennisOracle Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0038D48B2FA9DAE30079771E /* TennisOracle */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			path = TennisOracle;
+			sourceTree = "<group>";
+		};
+		0038D4B02FA9DAE70079771E /* TennisOracle Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			path = "TennisOracle Watch App";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0038D4862FA9DAE30079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4932FA9DAE70079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D49D2FA9DAE70079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4A92FA9DAE70079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4B82FA9DAE90079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4C22FA9DAEA0079771E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0038D4802FA9DAE30079771E = {
+			isa = PBXGroup;
+			children = (
+				0038D48B2FA9DAE30079771E /* TennisOracle */,
+				0038D4B02FA9DAE70079771E /* TennisOracle Watch App */,
+				0038D48A2FA9DAE30079771E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0038D48A2FA9DAE30079771E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0038D4892FA9DAE30079771E /* TennisOracle.app */,
+				0038D4962FA9DAE70079771E /* TennisOracleTests.xctest */,
+				0038D4A02FA9DAE70079771E /* TennisOracleUITests.xctest */,
+				0038D4AC2FA9DAE70079771E /* TennisOracle Watch App.app */,
+				0038D4BB2FA9DAE90079771E /* TennisOracle Watch AppTests.xctest */,
+				0038D4C52FA9DAEA0079771E /* TennisOracle Watch AppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0038D4882FA9DAE30079771E /* TennisOracle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D4D32FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracle" */;
+			buildPhases = (
+				0038D4852FA9DAE30079771E /* Sources */,
+				0038D4862FA9DAE30079771E /* Frameworks */,
+				0038D4872FA9DAE30079771E /* Resources */,
+				0038D4D22FA9DAEA0079771E /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D4AF2FA9DAE70079771E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0038D48B2FA9DAE30079771E /* TennisOracle */,
+			);
+			name = TennisOracle;
+			productName = TennisOracle;
+			productReference = 0038D4892FA9DAE30079771E /* TennisOracle.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0038D4952FA9DAE70079771E /* TennisOracleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D4D62FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracleTests" */;
+			buildPhases = (
+				0038D4922FA9DAE70079771E /* Sources */,
+				0038D4932FA9DAE70079771E /* Frameworks */,
+				0038D4942FA9DAE70079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D4982FA9DAE70079771E /* PBXTargetDependency */,
+			);
+			name = TennisOracleTests;
+			productName = TennisOracleTests;
+			productReference = 0038D4962FA9DAE70079771E /* TennisOracleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0038D49F2FA9DAE70079771E /* TennisOracleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D4D92FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracleUITests" */;
+			buildPhases = (
+				0038D49C2FA9DAE70079771E /* Sources */,
+				0038D49D2FA9DAE70079771E /* Frameworks */,
+				0038D49E2FA9DAE70079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D4A22FA9DAE70079771E /* PBXTargetDependency */,
+			);
+			name = TennisOracleUITests;
+			productName = TennisOracleUITests;
+			productReference = 0038D4A02FA9DAE70079771E /* TennisOracleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		0038D4AB2FA9DAE70079771E /* TennisOracle Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D4CF2FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracle Watch App" */;
+			buildPhases = (
+				0038D4A82FA9DAE70079771E /* Sources */,
+				0038D4A92FA9DAE70079771E /* Frameworks */,
+				0038D4AA2FA9DAE70079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0038D4B02FA9DAE70079771E /* TennisOracle Watch App */,
+			);
+			name = "TennisOracle Watch App";
+			productName = "TennisOracle Watch App";
+			productReference = 0038D4AC2FA9DAE70079771E /* TennisOracle Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0038D4BA2FA9DAE90079771E /* TennisOracle Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D4DC2FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracle Watch AppTests" */;
+			buildPhases = (
+				0038D4B72FA9DAE90079771E /* Sources */,
+				0038D4B82FA9DAE90079771E /* Frameworks */,
+				0038D4B92FA9DAE90079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D4BD2FA9DAE90079771E /* PBXTargetDependency */,
+			);
+			name = "TennisOracle Watch AppTests";
+			productName = "TennisOracle Watch AppTests";
+			productReference = 0038D4BB2FA9DAE90079771E /* TennisOracle Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0038D4C42FA9DAEA0079771E /* TennisOracle Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038D4DF2FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracle Watch AppUITests" */;
+			buildPhases = (
+				0038D4C12FA9DAEA0079771E /* Sources */,
+				0038D4C22FA9DAEA0079771E /* Frameworks */,
+				0038D4C32FA9DAEA0079771E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038D4C72FA9DAEA0079771E /* PBXTargetDependency */,
+			);
+			name = "TennisOracle Watch AppUITests";
+			productName = "TennisOracle Watch AppUITests";
+			productReference = 0038D4C52FA9DAEA0079771E /* TennisOracle Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0038D4812FA9DAE30079771E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					0038D4882FA9DAE30079771E = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					0038D4952FA9DAE70079771E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 0038D4882FA9DAE30079771E;
+					};
+					0038D49F2FA9DAE70079771E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 0038D4882FA9DAE30079771E;
+					};
+					0038D4AB2FA9DAE70079771E = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					0038D4BA2FA9DAE90079771E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 0038D4AB2FA9DAE70079771E;
+					};
+					0038D4C42FA9DAEA0079771E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 0038D4AB2FA9DAE70079771E;
+					};
+				};
+			};
+			buildConfigurationList = 0038D4842FA9DAE30079771E /* Build configuration list for PBXProject "TennisOracle" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0038D4802FA9DAE30079771E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0038D48A2FA9DAE30079771E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0038D4882FA9DAE30079771E /* TennisOracle */,
+				0038D4952FA9DAE70079771E /* TennisOracleTests */,
+				0038D49F2FA9DAE70079771E /* TennisOracleUITests */,
+				0038D4AB2FA9DAE70079771E /* TennisOracle Watch App */,
+				0038D4BA2FA9DAE90079771E /* TennisOracle Watch AppTests */,
+				0038D4C42FA9DAEA0079771E /* TennisOracle Watch AppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0038D4872FA9DAE30079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4942FA9DAE70079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D49E2FA9DAE70079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4AA2FA9DAE70079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4B92FA9DAE90079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4C32FA9DAEA0079771E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0038D4852FA9DAE30079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4922FA9DAE70079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D49C2FA9DAE70079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4A82FA9DAE70079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4B72FA9DAE90079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038D4C12FA9DAEA0079771E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0038D4982FA9DAE70079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D4882FA9DAE30079771E /* TennisOracle */;
+			targetProxy = 0038D4972FA9DAE70079771E /* PBXContainerItemProxy */;
+		};
+		0038D4A22FA9DAE70079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D4882FA9DAE30079771E /* TennisOracle */;
+			targetProxy = 0038D4A12FA9DAE70079771E /* PBXContainerItemProxy */;
+		};
+		0038D4AF2FA9DAE70079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D4AB2FA9DAE70079771E /* TennisOracle Watch App */;
+			targetProxy = 0038D4AE2FA9DAE70079771E /* PBXContainerItemProxy */;
+		};
+		0038D4BD2FA9DAE90079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D4AB2FA9DAE70079771E /* TennisOracle Watch App */;
+			targetProxy = 0038D4BC2FA9DAE90079771E /* PBXContainerItemProxy */;
+		};
+		0038D4C72FA9DAEA0079771E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038D4AB2FA9DAE70079771E /* TennisOracle Watch App */;
+			targetProxy = 0038D4C62FA9DAEA0079771E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0038D4CD2FA9DAEA0079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		0038D4CE2FA9DAEA0079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		0038D4D02FA9DAEA0079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "TennisOracle Watch App/TennisOracle Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = TennisOracle;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "TennisOracle saves your tennis session data to HealthKit.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "TennisOracle uses motion sensors to detect and analyze your tennis swings in real-time.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = WatchApps.TennisOracle;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.TennisOracle.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		0038D4D12FA9DAEA0079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "TennisOracle Watch App/TennisOracle Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = TennisOracle;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "TennisOracle saves your tennis session data to HealthKit.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "TennisOracle uses motion sensors to detect and analyze your tennis swings in real-time.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = WatchApps.TennisOracle;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.TennisOracle.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		0038D4D42FA9DAEA0079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = TennisOracle;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "TennisOracle saves your tennis session data to HealthKit.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "TennisOracle uses motion sensors to detect and analyze your tennis swings in real-time.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.TennisOracle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0038D4D52FA9DAEA0079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = TennisOracle;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "TennisOracle saves your tennis session data to HealthKit.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "TennisOracle uses motion sensors to detect and analyze your tennis swings in real-time.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.TennisOracle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0038D4D72FA9DAEA0079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.TennisOracleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TennisOracle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TennisOracle";
+			};
+			name = Debug;
+		};
+		0038D4D82FA9DAEA0079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.TennisOracleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TennisOracle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TennisOracle";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0038D4DA2FA9DAEA0079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.TennisOracleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TennisOracle;
+			};
+			name = Debug;
+		};
+		0038D4DB2FA9DAEA0079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = WatchApps.TennisOracleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TennisOracle;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0038D4DD2FA9DAEA0079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "WatchApps.TennisOracle-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TennisOracle Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TennisOracle Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		0038D4DE2FA9DAEA0079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "WatchApps.TennisOracle-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TennisOracle Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TennisOracle Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		0038D4E02FA9DAEA0079771E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "WatchApps.TennisOracle-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "TennisOracle Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		0038D4E12FA9DAEA0079771E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = G5LQFBMGZT;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "WatchApps.TennisOracle-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "TennisOracle Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0038D4842FA9DAE30079771E /* Build configuration list for PBXProject "TennisOracle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D4CD2FA9DAEA0079771E /* Debug */,
+				0038D4CE2FA9DAEA0079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D4CF2FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracle Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D4D02FA9DAEA0079771E /* Debug */,
+				0038D4D12FA9DAEA0079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D4D32FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D4D42FA9DAEA0079771E /* Debug */,
+				0038D4D52FA9DAEA0079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D4D62FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D4D72FA9DAEA0079771E /* Debug */,
+				0038D4D82FA9DAEA0079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D4D92FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D4DA2FA9DAEA0079771E /* Debug */,
+				0038D4DB2FA9DAEA0079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D4DC2FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracle Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D4DD2FA9DAEA0079771E /* Debug */,
+				0038D4DE2FA9DAEA0079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0038D4DF2FA9DAEA0079771E /* Build configuration list for PBXNativeTarget "TennisOracle Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038D4E02FA9DAEA0079771E /* Debug */,
+				0038D4E12FA9DAEA0079771E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0038D4812FA9DAE30079771E /* Project object */;
+}

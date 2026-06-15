@@ -1,6 +1,11 @@
 import Foundation
 
-struct GolfSensorSample: Codable {
+enum TennisMode: String, Codable {
+    case serve
+    case strokes
+}
+
+struct TennisSensorSample: Codable {
     let timestamp: Double
     let rotationRateX: Double
     let rotationRateY: Double
@@ -16,6 +21,7 @@ struct GolfSensorSample: Codable {
     let quaternionY: Double
     let quaternionZ: Double
     let heartRate: Double?
+    let mode: TennisMode
 
     func toDictionary() -> [String: Any] {
         var dict: [String: Any] = [
@@ -32,7 +38,8 @@ struct GolfSensorSample: Codable {
             "quaternionW": quaternionW,
             "quaternionX": quaternionX,
             "quaternionY": quaternionY,
-            "quaternionZ": quaternionZ
+            "quaternionZ": quaternionZ,
+            "mode": mode.rawValue
         ]
         if let hr = heartRate {
             dict["heartRate"] = hr
@@ -41,16 +48,17 @@ struct GolfSensorSample: Codable {
     }
 }
 
-struct GolfSwingMetrics: Codable {
+struct TennisShotMetrics: Codable {
     let timestamp: String
-    let swing_id: String
+    let shot_id: String
+    let mode: TennisMode
     let metrics: Metrics
     let flags: Flags
 
     struct Metrics: Codable {
         let score: Double
-        let impact_speed_mph: Double
-        let hand_speed_mph: Double
+        let speed_mph: Double
+        let spin_rpm: Double?
         let readiness_pct: Double
         let hr_bpm: Int
     }
@@ -58,5 +66,6 @@ struct GolfSwingMetrics: Codable {
     struct Flags: Codable {
         let micro_fatigue: Bool
         let oracle_grounded: Bool
+        let clean_contact: Bool
     }
 }

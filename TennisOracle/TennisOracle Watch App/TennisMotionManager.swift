@@ -1,6 +1,7 @@
 import CoreMotion
 import WatchConnectivity
 import HealthKit
+import WatchKit
 
 class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     private let motionManager = CMMotionManager()
@@ -11,6 +12,13 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     @Published var isRecording = false
     @Published var heartRate: Double = 0
     @Published var mode: TennisMode = .strokes
+
+    // Shot detection result — updated on main thread, observed via onChange
+    @Published var lastShotMph: Double = 0
+    @Published var lastShotReadiness: Double = 100
+    @Published var lastShotFatigued: Bool = false
+    @Published var lastShotCleanContact: Bool = true
+    @Published var shotCount: Int = 0   // increments on every shot → triggers onChange
 
     private var sessionStartTime: Date?
     private var sampleBuffer: [TennisSensorSample] = []
@@ -33,7 +41,26 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         if message["type"] as? String == "tennis_shot_detected" {
-            NotificationCenter.default.post(name: NSNotification.Name("TennisShotDetected"), object: nil, userInfo: message)
+            applyShot(message)
+        }
+    }
+
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
+        if userInfo["type"] as? String == "tennis_shot_detected" {
+            applyShot(userInfo)
+        }
+    }
+
+    private func applyShot(_ message: [String: Any]) {
+        guard let shot = message["shot"] as? [String: Any],
+              let metrics = shot["metrics"] as? [String: Any],
+              let flags = shot["flags"] as? [String: Any] else { return }
+        DispatchQueue.main.async {
+            self.lastShotMph = metrics["speed_mph"] as? Double ?? 0
+            self.lastShotReadiness = metrics["readiness_pct"] as? Double ?? 100
+            self.lastShotFatigued = flags["micro_fatigue"] as? Bool ?? false
+            self.lastShotCleanContact = flags["clean_contact"] as? Bool ?? true
+            self.shotCount += 1
         }
     }
 
@@ -105,7 +132,27 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
 
+    // Cooldown to avoid rapid-fire haptics from a single swing
+    private var localHapticCooldownUntil: Date = .distantPast
+
     private func sendBatch() {
+        // Local peak detection — immediate haptic without Mac round-trip
+        let mags = sampleBuffer.map {
+            sqrt($0.rotationRateX * $0.rotationRateX +
+                 $0.rotationRateY * $0.rotationRateY +
+                 $0.rotationRateZ * $0.rotationRateZ)
+        }
+        if let peak = mags.max(), peak > 12.0, Date() > localHapticCooldownUntil {
+            localHapticCooldownUntil = Date().addingTimeInterval(1.5)
+            let clean = (mags.max() ?? 0) > 15.0  // stronger swing = more likely clean
+            DispatchQueue.main.async {
+                self.lastShotMph = peak * 2.5 * 1.4
+                self.lastShotCleanContact = clean
+                self.shotCount += 1
+                WKInterfaceDevice.current().play(clean ? .success : .failure)
+            }
+        }
+
         let samplesData = sampleBuffer.map { $0.toDictionary() }
         let message: [String: Any] = [
             "type": "tennis_sensor_batch",
