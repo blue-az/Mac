@@ -9,7 +9,7 @@ struct GolfiPhoneContentView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.blue)
             
-            Text("Golf Oracle Gateway (Rev 4)")
+            Text("Golf Oracle Gateway (Rev 5)")
                 .font(.title)
                 .bold()
             
