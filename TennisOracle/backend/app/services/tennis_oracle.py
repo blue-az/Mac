@@ -33,11 +33,11 @@ class TennisShotDetector:
     #   - Higher axis dominance (strokes are more planar)
     #   - Lower speed floor (no full-body rotation like a golf drive)
     #   - Shorter cooldown (rallies are fast)
-    SPEED_THRESHOLD = 8.0      # rad/s
+    SPEED_THRESHOLD = 9.5      # rad/s — raised from 8.0 to match Zepp floor
     SERVE_SPEED_THRESHOLD = 10.0
     AXIS_DOMINANCE = 0.38      # real tennis swings are 3D; 20 rad/s swing logged at 43.5%
     SUSTAINED_SAMPLES = 5      # 50ms at 100Hz
-    COOLDOWN = 1.5             # seconds between shots
+    COOLDOWN = 2.5             # seconds — raised from 1.5 to suppress double-fires
 
     def __init__(self, oracle: TennisOracle):
         self.oracle = oracle
@@ -120,6 +120,16 @@ class TennisShotDetector:
                     "micro_fatigue": fatigued,
                     "oracle_grounded": True,
                     "clean_contact": clean_contact
+                },
+                "peak_rad": batch_peak,
+                "peak_sample": {
+                    "quat_w": peak_sample.get('quaternionW'),
+                    "quat_x": peak_sample.get('quaternionX'),
+                    "quat_y": peak_sample.get('quaternionY'),
+                    "quat_z": peak_sample.get('quaternionZ'),
+                    "rot_x":  peak_sample.get('rotationRateX'),
+                    "rot_y":  peak_sample.get('rotationRateY'),
+                    "rot_z":  peak_sample.get('rotationRateZ'),
                 }
             })
 

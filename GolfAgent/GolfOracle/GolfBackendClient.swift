@@ -3,14 +3,24 @@ import WatchConnectivity
 import UIKit
 
 class GolfBackendClient: NSObject, ObservableObject {
+    static let shared = GolfBackendClient()
+
     @Published var isConnected = false
 
     private var webSocketTask: URLSessionWebSocketTask?
     private let urlSession = URLSession(configuration: .default)
     private var keepaliveTimer: Timer?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
+    private let relayQueue = DispatchQueue(label: "GolfBackendClient.relay")
+    private var pendingPayloads: [Data] = []
+    private var isConnecting = false
 
-    private let backendURL = "ws://192.168.8.172:8001/ws/golf"
+    // iPhone-owned session lifecycle — avoids WC message ordering dependency
+    private var activeSessionId: String?
+    private var sessionInactivityTimer: Timer?
+    private let sessionInactivityTimeout: TimeInterval = 10.0
+
+    private let backendURL = "ws://192.168.8.124:8001/ws/golf"
 
     override init() {
         super.init()
@@ -22,6 +32,7 @@ class GolfBackendClient: NSObject, ObservableObject {
                                                name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground),
                                                name: UIApplication.willEnterForegroundNotification, object: nil)
+        connect()
     }
 
     @objc private func appDidEnterBackground() {
@@ -42,6 +53,10 @@ class GolfBackendClient: NSObject, ObservableObject {
     }
 
     func connect() {
+        if isConnected || isConnecting {
+            return
+        }
+        isConnecting = true
         print("🔌 Connecting to Mac...")
         guard let url = URL(string: backendURL) else { return }
         webSocketTask?.cancel()
@@ -51,9 +66,11 @@ class GolfBackendClient: NSObject, ObservableObject {
 
         webSocketTask?.sendPing { [weak self] error in
             DispatchQueue.main.async {
+                self?.isConnecting = false
                 self?.isConnected = (error == nil)
                 if error == nil {
                     self?.startKeepalive()
+                    self?.flushPendingPayloads()
                 } else {
                     print("❌ Ping failed: \(error!.localizedDescription)")
                 }
@@ -102,6 +119,7 @@ class GolfBackendClient: NSObject, ObservableObject {
                 guard nsError.code != NSURLErrorCancelled else { return }
                 print("❌ connection lost: \(error.localizedDescription)")
                 DispatchQueue.main.async {
+                    self?.isConnecting = false
                     self?.isConnected = false
                     self?.keepaliveTimer?.invalidate()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -129,13 +147,113 @@ extension GolfBackendClient: WCSessionDelegate {
     func sessionDidDeactivate(_ session: WCSession) {}
 
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
-        if message["type"] as? String == "golf_sensor_batch" {
-            sendToMac(message)
+        if shouldRelayToMac(message) {
+            enqueueForMac(message)
         }
     }
+
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
+        if shouldRelayToMac(userInfo) {
+            enqueueForMac(userInfo)
+        }
+    }
+
+    private func shouldRelayToMac(_ dict: [String: Any]) -> Bool {
+        guard let type = dict["type"] as? String else { return false }
+        return type == "golf_sensor_batch" || type == "golf_session_start" || type == "golf_session_stop"
+    }
     
-    private func sendToMac(_ dict: [String: Any]) {
-        guard isConnected, let data = try? JSONSerialization.data(withJSONObject: dict) else { return }
-        webSocketTask?.send(.data(data)) { _ in }
+    private func enqueueForMac(_ dict: [String: Any]) {
+        guard let type = dict["type"] as? String else { return }
+
+        // golf_session_start from Watch is ignored — iPhone owns session open
+        if type == "golf_session_start" { return }
+
+        relayQueue.async { [weak self] in
+            guard let self else { return }
+
+            if type == "golf_session_stop" {
+                self.closeSessionOnQueue()
+                return
+            }
+
+            if type == "golf_sensor_batch" {
+                self.openSessionIfNeededOnQueue()
+                DispatchQueue.main.async { self.resetInactivityTimer() }
+            }
+
+            var outgoing = dict
+            if type == "golf_sensor_batch", let sid = self.activeSessionId {
+                outgoing["session_id"] = sid
+            }
+
+            guard let data = try? JSONSerialization.data(withJSONObject: outgoing) else { return }
+            self.pendingPayloads.append(data)
+            DispatchQueue.main.async {
+                if !self.isConnected { self.connect() }
+                else { self.flushPendingPayloads() }
+            }
+        }
+    }
+
+    // Must be called on relayQueue
+    private func openSessionIfNeededOnQueue() {
+        guard activeSessionId == nil else { return }
+        let sid = UUID().uuidString
+        activeSessionId = sid
+        let startMsg: [String: Any] = ["type": "golf_session_start", "session_id": sid]
+        if let data = try? JSONSerialization.data(withJSONObject: startMsg) {
+            pendingPayloads.insert(data, at: 0)  // prepend so it reaches backend before first batch
+        }
+        print("🆕 iPhone opened session: \(sid)")
+    }
+
+    // Must be called on relayQueue
+    private func closeSessionOnQueue() {
+        guard let sid = activeSessionId else { return }
+        activeSessionId = nil
+        DispatchQueue.main.async {
+            self.sessionInactivityTimer?.invalidate()
+            self.sessionInactivityTimer = nil
+        }
+        let stopMsg: [String: Any] = ["type": "golf_session_stop", "session_id": sid]
+        if let data = try? JSONSerialization.data(withJSONObject: stopMsg) {
+            pendingPayloads.append(data)
+        }
+        DispatchQueue.main.async {
+            if self.isConnected { self.flushPendingPayloads() }
+        }
+        print("🛑 iPhone closed session: \(sid)")
+    }
+
+    // Must be called on main thread
+    private func resetInactivityTimer() {
+        sessionInactivityTimer?.invalidate()
+        sessionInactivityTimer = Timer.scheduledTimer(withTimeInterval: sessionInactivityTimeout, repeats: false) { [weak self] _ in
+            guard let self else { return }
+            print("⏱ Session inactivity timeout — closing")
+            self.relayQueue.async { self.closeSessionOnQueue() }
+        }
+    }
+
+    private func flushPendingPayloads() {
+        relayQueue.async { [weak self] in
+            guard let self, self.isConnected else { return }
+            while !self.pendingPayloads.isEmpty {
+                let payload = self.pendingPayloads.removeFirst()
+                self.webSocketTask?.send(.data(payload)) { [weak self] error in
+                    guard let self, let error else { return }
+                    print("❌ Failed to forward batch to Mac: \(error.localizedDescription)")
+                    self.relayQueue.async {
+                        self.pendingPayloads.insert(payload, at: 0)
+                    }
+                    DispatchQueue.main.async {
+                        self.isConnected = false
+                        self.keepaliveTimer?.invalidate()
+                        self.connect()
+                    }
+                }
+            }
+        }
     }
 }

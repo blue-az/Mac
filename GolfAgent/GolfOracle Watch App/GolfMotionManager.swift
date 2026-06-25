@@ -17,10 +17,11 @@ class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     @Published var lastSwingFatigued: Bool = false
     @Published var swingCount: Int = 0
 
-    private var localHapticCooldownUntil: Date = .distantPast
     private var sessionStartTime: Date?
+    private var sessionID: String?
     private var sampleBuffer: [GolfSensorSample] = []
     private let batchSize = 50 // Smaller batches for lower latency
+    private var lastAppliedSwingId: String?
 
     let sampleRate: Double = 100.0 // 100Hz as per spec
 
@@ -53,7 +54,12 @@ class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
         guard let swing = message["swing"] as? [String: Any],
               let metrics = swing["metrics"] as? [String: Any],
               let flags = swing["flags"] as? [String: Any] else { return }
+        let swingId = swing["swing_id"] as? String
         DispatchQueue.main.async {
+            if let sid = swingId {
+                guard sid != self.lastAppliedSwingId else { return }
+                self.lastAppliedSwingId = sid
+            }
             self.lastSwingMph = metrics["impact_speed_mph"] as? Double ?? 0
             self.lastSwingReadiness = metrics["readiness_pct"] as? Double ?? 100
             self.lastSwingFatigued = flags["micro_fatigue"] as? Bool ?? false
@@ -66,7 +72,13 @@ class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
 
         isRecording = true
         sessionStartTime = Date()
+        sessionID = UUID().uuidString
         sampleBuffer.removeAll()
+        swingCount = 0
+        lastSwingMph = 0
+        lastSwingReadiness = 100
+        lastSwingFatigued = false
+        sendControlMessage(type: "golf_session_start")
 
         // 0. Start Workout Session to keep app alive
         workoutManager.startWorkout()
@@ -132,24 +144,11 @@ class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     }
 
     private func sendBatch() {
-        let mags = sampleBuffer.map {
-            sqrt($0.rotationRateX * $0.rotationRateX +
-                 $0.rotationRateY * $0.rotationRateY +
-                 $0.rotationRateZ * $0.rotationRateZ)
-        }
-        if let peak = mags.max(), peak > 12.0, Date() > localHapticCooldownUntil {
-            localHapticCooldownUntil = Date().addingTimeInterval(1.5)
-            DispatchQueue.main.async {
-                self.lastSwingMph = peak * 2.5 * 1.4
-                self.lastSwingFatigued = false
-                self.swingCount += 1
-                WKInterfaceDevice.current().play(.success)
-            }
-        }
-
+        guard let sessionID else { return }
         let samplesData = sampleBuffer.map { $0.toDictionary() }
         let message: [String: Any] = [
             "type": "golf_sensor_batch",
+            "session_id": sessionID,
             "samples": samplesData,
             "timestamp": Date().timeIntervalSince1970
         ]
@@ -162,9 +161,28 @@ class GolfMotionManager: NSObject, ObservableObject, WCSessionDelegate {
         sampleBuffer.removeAll()
     }
 
+    private func sendControlMessage(type: String) {
+        guard let sessionID else { return }
+        let message: [String: Any] = [
+            "type": type,
+            "session_id": sessionID,
+            "timestamp": Date().timeIntervalSince1970
+        ]
+
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(message, replyHandler: nil)
+        }
+        WCSession.default.transferUserInfo(message)
+    }
+
     func stopSession() {
         isRecording = false
         motionManager.stopDeviceMotionUpdates()
+        if !sampleBuffer.isEmpty {
+            sendBatch()
+        }
+        sendControlMessage(type: "golf_session_stop")
         workoutManager.stopWorkout()
+        sessionID = nil
     }
 }

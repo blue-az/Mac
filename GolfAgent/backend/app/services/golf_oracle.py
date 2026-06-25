@@ -25,6 +25,10 @@ class GolfOracle:
         
         # Kalman State (Simplified 9-state tracking for demonstration)
         self.kalman_state = np.zeros(9) # [e1, e2, e3, a1, a2, a3, v1, v2, v3]
+
+    def reset_session_state(self):
+        self.swing_times.clear()
+        self.kalman_state = np.zeros(9)
         
     def apply_filters(self, signal: List[float]) -> List[float]:
         """Apply AA and Savitzky-Golay filters."""
@@ -59,6 +63,27 @@ class GolfSwingDetector:
         self.buffer = deque(maxlen=1000) # 10s buffer at 100Hz
         self.cooldown_until = 0
         self.cooldown_period = 2.0 # 2 seconds between swings
+
+    def reset_session_state(self):
+        self.buffer.clear()
+        self.cooldown_until = 0
+        self.oracle.reset_session_state()
+
+    @staticmethod
+    def _rotation_magnitude(sample: Dict) -> float:
+        return np.sqrt(
+            sample['rotationRateX']**2 +
+            sample['rotationRateY']**2 +
+            sample['rotationRateZ']**2
+        )
+
+    @staticmethod
+    def _acceleration_magnitude(sample: Dict) -> float:
+        return np.sqrt(
+            sample['accelerationX']**2 +
+            sample['accelerationY']**2 +
+            sample['accelerationZ']**2
+        )
         
     def process_samples(self, samples: List[Dict]) -> List[Dict]:
         results = []
@@ -76,16 +101,19 @@ class GolfSwingDetector:
         # We look for the maximum rotation magnitude in the current batch
         if len(samples) == 0: return []
         
-        batch_mags = [np.sqrt(s['rotationRateX']**2 + s['rotationRateY']**2 + s['rotationRateZ']**2) for s in samples]
+        batch_mags = [self._rotation_magnitude(s) for s in samples]
+        accel_mags = [self._acceleration_magnitude(s) for s in samples]
         batch_peak = max(batch_mags)
+        accel_peak = max(accel_mags)
+        batch_mean = float(np.mean(batch_mags))
         
         # EXHAUSTIVE TRACE: Log EVERY batch peak to see what's happening
         if batch_peak > 1.0:
             intensity = "LOW" if batch_peak < 8.0 else "MEDIUM" if batch_peak < 15.0 else "HIGH"
-            print(f"TRACE: [{intensity}] Batch Peak={batch_peak:.2f} rad/s")
+            print(f"TRACE: [{intensity}] Batch Peak={batch_peak:.2f} rad/s, Accel Peak={accel_peak:.2f}g, Mean={batch_mean:.2f}")
 
-        # Intelligent Threshold: 12.0 rad/s + Rotation Signature Check
-        if batch_peak > 12.0:
+        # Intelligent Threshold: 20.0 rad/s — real swings observed at 24+ rad/s, hand waves at 15–18
+        if batch_peak > 20.0:
             # VERIFICATION 1: Is this a golf swing or just a 'wiggle'?
             # Check for dominant axis (Swing Arc)
             peak_sample = samples[np.argmax(batch_mags)]
@@ -98,14 +126,43 @@ class GolfSwingDetector:
             # A wiggle is high speed but very short. A swing is sustained.
             # We check how many samples in this batch are above 50% of the peak.
             sustained_samples = sum(1 for m in batch_mags if m > (batch_peak * 0.5))
-            is_sustained = sustained_samples > 8 # At least 80ms of high-speed motion
-            
+            is_high_energy_candidate = batch_peak >= 17.0 and accel_peak >= 4.0
+
+            if is_high_energy_candidate:
+                min_sustained_samples = 8
+            else:
+                min_sustained_samples = 12 if batch_peak < 15.0 else 10
+            is_sustained = sustained_samples >= min_sustained_samples
+
+            # VERIFICATION 3: Translational impulse
+            # False positives from watch handling often have rotation without a matching
+            # acceleration burst. Real strikes should show both.
+            min_accel_peak = 3.0  # real impact: 6–17g observed; follow-through/carry: <2g
+            has_accel_burst = accel_peak >= min_accel_peak
+
+            # VERIFICATION 4: Burst shape
+            # Require the peak to stand clearly above the batch baseline.
+            peak_to_mean_ratio = batch_peak / max(batch_mean, 0.001)
+            min_peak_to_mean_ratio = 1.70 if is_high_energy_candidate else 2.25
+            is_sharp_burst = peak_to_mean_ratio >= min_peak_to_mean_ratio
+
             if not is_swing_arc:
                 print(f"🚫 Noise Filtered: chaotic rotation ({dominant_axis/total_rotation:.1%})")
                 return []
             
             if not is_sustained:
                 print(f"🚫 Noise Filtered: waggle detected (short burst of {sustained_samples} samples)")
+                return []
+
+            if not has_accel_burst:
+                print(f"🚫 Noise Filtered: rotation without impact impulse (accel peak {accel_peak:.2f}g)")
+                return []
+
+            if not is_sharp_burst:
+                print(
+                    f"🚫 Noise Filtered: weak burst shape "
+                    f"(peak/mean {peak_to_mean_ratio:.2f} < {min_peak_to_mean_ratio:.2f})"
+                )
                 return []
 
             # We found a verified swing! 
@@ -120,7 +177,11 @@ class GolfSwingDetector:
             
             self.cooldown_until = current_time + self.cooldown_period
             
-            print(f"⛳️ Oracle Verified Swing! Peak={batch_peak:.2f} rad/s -> {impact_speed:.1f} MPH (Sustained {sustained_samples}0ms)")
+            print(
+                f"⛳️ Oracle Verified Swing! Peak={batch_peak:.2f} rad/s, "
+                f"Accel={accel_peak:.2f}g -> {impact_speed:.1f} MPH "
+                f"(Sustained {sustained_samples}0ms, peak/mean {peak_to_mean_ratio:.2f})"
+            )
             
             results.append({
                 "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),

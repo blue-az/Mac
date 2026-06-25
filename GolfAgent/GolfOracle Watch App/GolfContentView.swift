@@ -10,7 +10,7 @@ struct GolfContentView: View {
                 Circle()
                     .fill(motionManager.isRecording ? Color.green : Color.red)
                     .frame(width: 8, height: 8)
-                Text(motionManager.isRecording ? "LIVE" : "READY (Rev 5)")
+                Text(motionManager.isRecording ? "LIVE" : "READY (Rev 6)")
                     .font(.system(size: 12, weight: .bold))
                 Spacer()
                 Image(systemName: "heart.fill")
@@ -61,7 +61,7 @@ struct GolfContentView: View {
             .tint(motionManager.isRecording ? .red : .blue)
             .buttonStyle(.borderedProminent)
         }
-        .onChange(of: motionManager.swingCount) { _ in
+        .onChange(of: motionManager.swingCount) {
             WKInterfaceDevice.current().play(motionManager.lastSwingFatigued ? .directionUp : .success)
         }
     }

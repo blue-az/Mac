@@ -9,7 +9,7 @@ class TennisBackendClient: NSObject, ObservableObject {
     private let urlSession = URLSession(configuration: .default)
     
     // Using Port 8002 for Tennis Oracle
-    private let backendURL = "ws://192.168.8.172:8002/ws/tennis"
+    private let backendURL = "ws://192.168.8.124:8002/ws/tennis"
 
     override init() {
         super.init()
