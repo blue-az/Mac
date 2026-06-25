@@ -8,6 +8,9 @@ __pycache__/
 # Database
 *.db
 *.db-journal
+*.db-shm
+*.db-wal
+*.db.bak_*
 
 # Downloads/imports
 downloads/
@@ -23,8 +26,12 @@ imports/*.FIT
 
 # Xcode user data
 MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj/xcuserdata/
+MacOSTennisAgent/TennisSensor/TennisSensor.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcuserstate
 
 # Local data artifacts
 Tennis/60shot_session/
 Tennis/frames/**/*.jpg
 Tennis/frames/**/*.png
+GolfAgent/debug/
+zepp_oracle_serves_*.csv
