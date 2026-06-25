@@ -20,14 +20,25 @@ current_session: Dict = {"started_at": None, "shots": []}
 def init_db():
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS oracle_shots (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ts TEXT NOT NULL,
+            mode TEXT NOT NULL,
+            oracle_mph REAL,
+            peak_rad REAL,
+            session_tag TEXT
+        )
+    """)
     for col, typedef in [
         ("quat_w", "REAL"), ("quat_x", "REAL"), ("quat_y", "REAL"), ("quat_z", "REAL"),
         ("rot_x",  "REAL"), ("rot_y",  "REAL"), ("rot_z",  "REAL"),
     ]:
         try:
             cur.execute(f"ALTER TABLE oracle_shots ADD COLUMN {col} {typedef}")
-        except sqlite3.OperationalError:
-            pass  # column already exists
+        except sqlite3.OperationalError as exc:
+            if "duplicate column name" not in str(exc).lower():
+                raise
     con.commit()
     con.close()
 
