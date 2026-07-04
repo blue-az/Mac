@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct GolfiPhoneContentView: View {
-    @StateObject private var backendClient = GolfBackendClient()
+    @StateObject private var backendClient = GolfBackendClient.shared
     
     var body: some View {
         VStack(spacing: 20) {

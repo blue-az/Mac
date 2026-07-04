@@ -69,20 +69,30 @@
 		0038D4AC2FA9DAE70079771E /* TennisOracle Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TennisOracle Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0038D4BB2FA9DAE90079771E /* TennisOracle Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TennisOracle Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0038D4C52FA9DAEA0079771E /* TennisOracle Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TennisOracle Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		00C352352FECD26800E5A764 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		00C352382FECD44900E5A764 /* Exceptions for "TennisOracle" folder in "TennisOracle" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0038D4882FA9DAE30079771E /* TennisOracle */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0038D48B2FA9DAE30079771E /* TennisOracle */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				00C352382FECD44900E5A764 /* Exceptions for "TennisOracle" folder in "TennisOracle" target */,
 			);
 			path = TennisOracle;
 			sourceTree = "<group>";
 		};
 		0038D4B02FA9DAE70079771E /* TennisOracle Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = "TennisOracle Watch App";
 			sourceTree = "<group>";
 		};
@@ -137,6 +147,7 @@
 		0038D4802FA9DAE30079771E = {
 			isa = PBXGroup;
 			children = (
+				00C352352FECD26800E5A764 /* Info.plist */,
 				0038D48B2FA9DAE30079771E /* TennisOracle */,
 				0038D4B02FA9DAE70079771E /* TennisOracle Watch App */,
 				0038D48A2FA9DAE30079771E /* Products */,
@@ -645,6 +656,7 @@
 				DEVELOPMENT_TEAM = G5LQFBMGZT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TennisOracle/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TennisOracle;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "TennisOracle saves your tennis session data to HealthKit.";
@@ -680,6 +692,7 @@
 				DEVELOPMENT_TEAM = G5LQFBMGZT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TennisOracle/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TennisOracle;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to motion and fitness data to track your tennis sessions.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "TennisOracle saves your tennis session data to HealthKit.";
