@@ -1,10 +1,11 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
-from typing import Dict
+from typing import Dict, List
 import json
 import time
 import sqlite3
 import os
+import uuid
 from app.services.tennis_oracle import TennisOracle, TennisShotDetector
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "../../../tennis_sessions.db")
@@ -14,12 +15,42 @@ app = FastAPI()
 oracle = TennisOracle()
 detector = TennisShotDetector(oracle)
 
-current_session: Dict = {"started_at": None, "shots": []}
+current_session: Dict = {
+    "session_id": None,
+    "started_at": None,
+    "ended_at": None,
+    "batches": 0,
+    "sample_count": 0,
+    "shots": [],
+}
 
 
 def init_db():
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS sessions (
+            session_id TEXT PRIMARY KEY,
+            device TEXT,
+            start_time INTEGER,
+            end_time INTEGER,
+            duration_minutes REAL,
+            total_shots INTEGER DEFAULT 0,
+            created_at INTEGER DEFAULT (strftime('%s', 'now'))
+        )
+    """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS raw_sensor_buffer (
+            buffer_id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            start_timestamp REAL NOT NULL,
+            end_timestamp REAL NOT NULL,
+            sample_count INTEGER NOT NULL,
+            compressed_data BLOB,
+            created_at INTEGER DEFAULT (strftime('%s', 'now')),
+            FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON DELETE CASCADE
+        )
+    """)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS oracle_shots (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +74,72 @@ def init_db():
     con.close()
 
 
-def persist_shot(shot: Dict, session_tag: str):
+def persist_session_start(session_id: str, start_epoch: int):
+    con = sqlite3.connect(DB_PATH)
+    con.execute("""
+        INSERT OR IGNORE INTO sessions (session_id, device, start_time)
+        VALUES (?, ?, ?)
+    """, (session_id, "AppleWatch", start_epoch))
+    con.commit()
+    con.close()
+
+
+def persist_session_end(session_id: str, end_epoch: int, total_shots: int):
+    con = sqlite3.connect(DB_PATH)
+    con.execute("""
+        UPDATE sessions
+        SET end_time = ?,
+            duration_minutes = (? - start_time) / 60.0,
+            total_shots = ?
+        WHERE session_id = ?
+    """, (end_epoch, end_epoch, total_shots, session_id))
+    con.commit()
+    con.close()
+
+
+def samples_to_csv(samples: List[Dict]) -> bytes:
+    columns = [
+        "timestamp", "rotationRateX", "rotationRateY", "rotationRateZ",
+        "gravityX", "gravityY", "gravityZ",
+        "accelerationX", "accelerationY", "accelerationZ",
+        "quaternionW", "quaternionX", "quaternionY", "quaternionZ",
+        "heartRate", "mode",
+    ]
+    rows = [",".join(columns)]
+    for sample in samples:
+        rows.append(",".join(str(sample.get(col, "")) for col in columns))
+    return ("\n".join(rows) + "\n").encode("utf-8")
+
+
+def persist_batch(session_id: str, batch_index: int, samples: List[Dict]):
+    if not samples:
+        return
+    timestamps = [
+        float(sample["timestamp"])
+        for sample in samples
+        if "timestamp" in sample
+    ]
+    start_ts = min(timestamps) if timestamps else time.time()
+    end_ts = max(timestamps) if timestamps else start_ts
+    buffer_id = f"{session_id}_b{batch_index:06d}_{uuid.uuid4().hex[:8]}"
+    con = sqlite3.connect(DB_PATH)
+    con.execute("""
+        INSERT INTO raw_sensor_buffer
+            (buffer_id, session_id, start_timestamp, end_timestamp, sample_count, compressed_data)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        buffer_id,
+        session_id,
+        start_ts,
+        end_ts,
+        len(samples),
+        samples_to_csv(samples),
+    ))
+    con.commit()
+    con.close()
+
+
+def persist_shot(shot: Dict, session_id: str):
     ps = shot.get("peak_sample", {})
     con = sqlite3.connect(DB_PATH)
     con.execute("""
@@ -56,7 +152,7 @@ def persist_shot(shot: Dict, session_tag: str):
         shot["mode"],
         shot["metrics"]["speed_mph"],
         shot.get("peak_rad"),
-        session_tag,
+        session_id,
         ps.get("quat_w"), ps.get("quat_x"), ps.get("quat_y"), ps.get("quat_z"),
         ps.get("rot_x"),  ps.get("rot_y"),  ps.get("rot_z"),
     ))
@@ -71,9 +167,16 @@ init_db()
 async def websocket_endpoint(websocket: WebSocket):
     global current_session
     await websocket.accept()
-    print("🎾 Tennis Watch connected")
+    start_epoch = int(time.time())
+    session_id = time.strftime("oracle_%Y%m%d_%H%M%S", time.localtime(start_epoch))
+    persist_session_start(session_id, start_epoch)
+    print(f"🎾 Tennis Watch connected: {session_id}")
     current_session = {
+        "session_id": session_id,
         "started_at": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+        "ended_at": None,
+        "batches": 0,
+        "sample_count": 0,
         "shots": []
     }
     try:
@@ -98,12 +201,18 @@ async def websocket_endpoint(websocket: WebSocket):
             if message.get("type") == "tennis_sensor_batch":
                 samples = message.get("samples", [])
                 mode = message.get("mode", "strokes")
-                print(f"📊 Received batch: {len(samples)} samples (mode={mode})")
+                current_session["batches"] += 1
+                current_session["sample_count"] += len(samples)
+                persist_batch(session_id, current_session["batches"], samples)
+                print(
+                    f"📊 Received batch: {len(samples)} samples "
+                    f"(mode={mode}, total={current_session['sample_count']})"
+                )
                 shots = detector.process_samples(samples, mode)
 
                 for shot in shots:
                     current_session["shots"].append(shot)
-                    persist_shot(shot, current_session["started_at"][:10])
+                    persist_shot(shot, session_id)
                     await websocket.send_text(json.dumps({
                         "type": "tennis_shot_detected",
                         "shot": shot
@@ -113,6 +222,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
     except WebSocketDisconnect:
         print("🎾 Tennis Watch disconnected")
+    finally:
+        end_epoch = int(time.time())
+        current_session["ended_at"] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(end_epoch))
+        persist_session_end(session_id, end_epoch, len(current_session["shots"]))
 
 
 @app.get("/sessions/latest")

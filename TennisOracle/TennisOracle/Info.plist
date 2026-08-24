@@ -6,6 +6,10 @@
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
 	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>TennisOracle connects to your Mac on the local network to relay tennis sensor data.</string>
 </dict>
 </plist>

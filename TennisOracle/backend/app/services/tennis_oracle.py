@@ -34,9 +34,13 @@ class TennisShotDetector:
     #   - Lower speed floor (no full-body rotation like a golf drive)
     #   - Shorter cooldown (rallies are fast)
     SPEED_THRESHOLD = 9.5      # rad/s — raised from 8.0 to match Zepp floor
-    SERVE_SPEED_THRESHOLD = 10.0
+    SERVE_SPEED_THRESHOLD = 20.0
+    SERVE_STRONG_PEAK = 28.0
     AXIS_DOMINANCE = 0.38      # real tennis swings are 3D; 20 rad/s swing logged at 43.5%
+    SERVE_AXIS_DOMINANCE = 0.55
     SUSTAINED_SAMPLES = 5      # 50ms at 100Hz
+    SERVE_SUSTAINED_SAMPLES = 10
+    SERVE_MEDIUM_SUSTAINED_SAMPLES = 17
     COOLDOWN = 2.5             # seconds — raised from 1.5 to suppress double-fires
 
     def __init__(self, oracle: TennisOracle):
@@ -63,7 +67,10 @@ class TennisShotDetector:
         ]
         batch_peak = max(batch_mags)
 
-        threshold = self.SERVE_SPEED_THRESHOLD if mode == "serve" else self.SPEED_THRESHOLD
+        is_serve = mode == "serve"
+        threshold = self.SERVE_SPEED_THRESHOLD if is_serve else self.SPEED_THRESHOLD
+        axis_dominance_threshold = self.SERVE_AXIS_DOMINANCE if is_serve else self.AXIS_DOMINANCE
+        sustained_threshold = self.SERVE_SUSTAINED_SAMPLES if is_serve else self.SUSTAINED_SAMPLES
 
         if batch_peak > 1.0:
             label = "LOW" if batch_peak < threshold else "MED" if batch_peak < 18.0 else "HIGH"
@@ -79,10 +86,10 @@ class TennisShotDetector:
             dominant_axis = max(axes)
             total_rotation = sum(axes)
             dominance_ratio = dominant_axis / total_rotation
-            is_planar = dominance_ratio > self.AXIS_DOMINANCE
+            is_planar = dominance_ratio > axis_dominance_threshold
 
             sustained = sum(1 for m in batch_mags if m > (batch_peak * 0.5))
-            is_sustained = sustained > self.SUSTAINED_SAMPLES
+            is_sustained = sustained > sustained_threshold
 
             if not is_planar:
                 print(f"🚫 Noise: chaotic rotation ({dominance_ratio:.1%})")
@@ -90,6 +97,10 @@ class TennisShotDetector:
 
             if not is_sustained:
                 print(f"🚫 Noise: short burst ({sustained} samples)")
+                return []
+
+            if is_serve and batch_peak < self.SERVE_STRONG_PEAK and sustained < self.SERVE_MEDIUM_SUSTAINED_SAMPLES:
+                print(f"🚫 Noise: medium serve peak without sustained motion ({sustained} samples)")
                 return []
 
             # Clean contact: dominant axis carries >70% of rotation
