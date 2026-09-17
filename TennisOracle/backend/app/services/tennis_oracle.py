@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import butter, lfilter, savgol_filter
 from collections import deque
-from typing import List, Dict, Tuple
+from typing import List, Dict, Optional, Tuple
 import time
 
 
@@ -59,6 +59,23 @@ class TennisShotDetector:
             sample['rotationRateX']**2 + sample['rotationRateY']**2 + sample['rotationRateZ']**2
         ))
 
+    @staticmethod
+    def _sample_ts(sample: Optional[Dict]) -> Optional[float]:
+        if not sample:
+            return None
+        ts = sample.get('timestamp')
+        try:
+            return float(ts) if ts is not None else None
+        except (TypeError, ValueError):
+            return None
+
+    def _sensor_now(self, samples: List[Dict], peak_sample: Optional[Dict] = None) -> float:
+        for s in (peak_sample, samples[-1] if samples else None):
+            ts = self._sample_ts(s)
+            if ts is not None:
+                return ts
+        return self._timefn()
+
     def _merged_sustained(self, peak_sample: Dict, batch_peak: float) -> int:
         """Count samples near the peak that stay above 50% of batch_peak.
 
@@ -96,12 +113,15 @@ class TennisShotDetector:
         corrected_peak = batch_peak * 2.5
         speed_mph = corrected_peak * 1.4
         fatigued, readiness = self.oracle.predict_fatigue(1.0)
-        self.cooldown_until = current_time + self.COOLDOWN
+        event_ts = self._sample_ts(peak_sample)
+        if event_ts is None:
+            event_ts = current_time
+        self.cooldown_until = event_ts + self.COOLDOWN
         print(f"🎾 Shot! Peak={batch_peak:.2f} rad/s → {speed_mph:.1f} MPH | "
               f"clean={clean_contact} sustained={sustained*10}ms")
         return {
-            "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(current_time)),
-            "shot_id": str(int(current_time)),
+            "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(event_ts)),
+            "shot_id": str(int(event_ts)),
             "mode": mode,
             "metrics": {
                 "score": 85.0,
@@ -161,7 +181,7 @@ class TennisShotDetector:
 
     def process_samples(self, samples: List[Dict], mode: str = "strokes") -> List[Dict]:
         results = []
-        current_time = self._timefn()
+        current_time = self._sensor_now(samples)
 
         for s in samples:
             self.buffer.append(s)
@@ -169,12 +189,13 @@ class TennisShotDetector:
         if not samples:
             return []
 
+        current_time = self._sensor_now(samples)
         if current_time >= self.cooldown_until:
             resolved = self._resolve_pending_medium(samples, current_time)
             if resolved:
                 results.append(resolved)
 
-        if current_time < self.cooldown_until:
+        if self._sensor_now(samples) < self.cooldown_until:
             return results
 
         batch_mags = [self._rotation_mag(s) for s in samples]
@@ -191,6 +212,9 @@ class TennisShotDetector:
 
         if batch_peak > threshold:
             peak_sample = samples[int(np.argmax(batch_mags))]
+            peak_ts = self._sample_ts(peak_sample)
+            if peak_ts is not None and peak_ts < self.cooldown_until:
+                return results
             axes = [
                 abs(peak_sample['rotationRateX']),
                 abs(peak_sample['rotationRateY']),
@@ -206,11 +230,11 @@ class TennisShotDetector:
 
             if not is_planar:
                 print(f"🚫 Noise: chaotic rotation ({dominance_ratio:.1%})")
-                return []
+                return results
 
             if not is_sustained:
                 print(f"🚫 Noise: short burst ({sustained} samples)")
-                return []
+                return results
 
             if is_serve and batch_peak < self.SERVE_STRONG_PEAK and sustained < self.SERVE_MEDIUM_SUSTAINED_SAMPLES:
                 merged = self._merged_sustained(peak_sample, batch_peak)
