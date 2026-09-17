@@ -42,29 +42,142 @@ class TennisShotDetector:
     SERVE_SUSTAINED_SAMPLES = 10
     SERVE_MEDIUM_SUSTAINED_SAMPLES = 17
     COOLDOWN = 2.5             # seconds — raised from 1.5 to suppress double-fires
+    # Not a detection threshold: how far to look in self.buffer when a serve is
+    # split across the Watch's ~50-sample (~0.5s) batches.
+    SERVE_MERGE_WINDOW_SEC = 0.35
 
     def __init__(self, oracle: TennisOracle):
         self.oracle = oracle
         self.buffer = deque(maxlen=1000)
         self.cooldown_until = 0
+        self._timefn = time.time
+        self._pending_medium = None  # serve split across batches; axis already passed
+
+    @staticmethod
+    def _rotation_mag(sample: Dict) -> float:
+        return float(np.sqrt(
+            sample['rotationRateX']**2 + sample['rotationRateY']**2 + sample['rotationRateZ']**2
+        ))
+
+    def _merged_sustained(self, peak_sample: Dict, batch_peak: float) -> int:
+        """Count samples near the peak that stay above 50% of batch_peak.
+
+        Live detection is per ~50-sample batch; a real serve often straddles two.
+        Only used to re-evaluate the medium-serve sustained gate.
+        """
+        half = self.SERVE_MERGE_WINDOW_SEC
+        thresh = batch_peak * 0.5
+        peak_ts = peak_sample.get('timestamp')
+        try:
+            peak_ts = float(peak_ts) if peak_ts is not None else None
+        except (TypeError, ValueError):
+            peak_ts = None
+
+        if peak_ts is None:
+            window = list(self.buffer)[-80:]
+            return sum(1 for s in window if self._rotation_mag(s) > thresh)
+
+        count = 0
+        for s in self.buffer:
+            ts = s.get('timestamp')
+            try:
+                ts = float(ts) if ts is not None else None
+            except (TypeError, ValueError):
+                continue
+            if ts is None or abs(ts - peak_ts) > half:
+                continue
+            if self._rotation_mag(s) > thresh:
+                count += 1
+        return count
+
+    def _emit_shot(self, *, peak_sample: Dict, batch_peak: float, dominance_ratio: float,
+                   sustained: int, mode: str, hr_bpm: int, current_time: float) -> Dict:
+        clean_contact = dominance_ratio > 0.70
+        corrected_peak = batch_peak * 2.5
+        speed_mph = corrected_peak * 1.4
+        fatigued, readiness = self.oracle.predict_fatigue(1.0)
+        self.cooldown_until = current_time + self.COOLDOWN
+        print(f"🎾 Shot! Peak={batch_peak:.2f} rad/s → {speed_mph:.1f} MPH | "
+              f"clean={clean_contact} sustained={sustained*10}ms")
+        return {
+            "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(current_time)),
+            "shot_id": str(int(current_time)),
+            "mode": mode,
+            "metrics": {
+                "score": 85.0,
+                "speed_mph": speed_mph,
+                "spin_rpm": None,
+                "readiness_pct": readiness,
+                "hr_bpm": int(hr_bpm),
+            },
+            "flags": {
+                "micro_fatigue": fatigued,
+                "oracle_grounded": True,
+                "clean_contact": clean_contact,
+            },
+            "peak_rad": batch_peak,
+            "peak_sample": {
+                "quat_w": peak_sample.get('quaternionW'),
+                "quat_x": peak_sample.get('quaternionX'),
+                "quat_y": peak_sample.get('quaternionY'),
+                "quat_z": peak_sample.get('quaternionZ'),
+                "rot_x":  peak_sample.get('rotationRateX'),
+                "rot_y":  peak_sample.get('rotationRateY'),
+                "rot_z":  peak_sample.get('rotationRateZ'),
+            },
+        }
+
+    def _resolve_pending_medium(self, samples: List[Dict], current_time: float):
+        pending = self._pending_medium
+        if not pending:
+            return None
+        merged = self._merged_sustained(pending["peak_sample"], pending["batch_peak"])
+        if merged >= self.SERVE_MEDIUM_SUSTAINED_SAMPLES:
+            self._pending_medium = None
+            hr = samples[-1].get("heartRate", 70) if samples else 70
+            return self._emit_shot(
+                peak_sample=pending["peak_sample"],
+                batch_peak=pending["batch_peak"],
+                dominance_ratio=pending["dominance_ratio"],
+                sustained=merged,
+                mode=pending["mode"],
+                hr_bpm=hr,
+                current_time=current_time,
+            )
+        peak_ts = pending["peak_sample"].get("timestamp")
+        last_ts = samples[-1].get("timestamp") if samples else None
+        try:
+            peak_ts = float(peak_ts) if peak_ts is not None else None
+            last_ts = float(last_ts) if last_ts is not None else None
+        except (TypeError, ValueError):
+            peak_ts = last_ts = None
+        if peak_ts is None or last_ts is None or (last_ts - peak_ts) > (self.SERVE_MERGE_WINDOW_SEC * 2):
+            print(
+                f"🚫 Noise: medium serve peak without sustained motion "
+                f"({pending.get('batch_sustained', 0)} samples)"
+            )
+            self._pending_medium = None
+        return None
 
     def process_samples(self, samples: List[Dict], mode: str = "strokes") -> List[Dict]:
         results = []
-        current_time = time.time()
+        current_time = self._timefn()
 
         for s in samples:
             self.buffer.append(s)
 
-        if current_time < self.cooldown_until:
-            return []
-
         if not samples:
             return []
 
-        batch_mags = [
-            np.sqrt(s['rotationRateX']**2 + s['rotationRateY']**2 + s['rotationRateZ']**2)
-            for s in samples
-        ]
+        if current_time >= self.cooldown_until:
+            resolved = self._resolve_pending_medium(samples, current_time)
+            if resolved:
+                results.append(resolved)
+
+        if current_time < self.cooldown_until:
+            return results
+
+        batch_mags = [self._rotation_mag(s) for s in samples]
         batch_peak = max(batch_mags)
 
         is_serve = mode == "serve"
@@ -100,48 +213,29 @@ class TennisShotDetector:
                 return []
 
             if is_serve and batch_peak < self.SERVE_STRONG_PEAK and sustained < self.SERVE_MEDIUM_SUSTAINED_SAMPLES:
-                print(f"🚫 Noise: medium serve peak without sustained motion ({sustained} samples)")
-                return []
+                merged = self._merged_sustained(peak_sample, batch_peak)
+                if merged >= self.SERVE_MEDIUM_SUSTAINED_SAMPLES:
+                    sustained = merged
+                else:
+                    # Tail often arrives in the next ~50-sample batch. Hold axis-clean
+                    # candidate; resolve after the adjacent batch is in self.buffer.
+                    self._pending_medium = {
+                        "peak_sample": peak_sample,
+                        "batch_peak": batch_peak,
+                        "dominance_ratio": dominance_ratio,
+                        "mode": mode,
+                        "batch_sustained": sustained,
+                    }
+                    return results
 
-            # Clean contact: dominant axis carries >70% of rotation
-            clean_contact = dominance_ratio > 0.70
-
-            # Speed estimate: 2.5x filter correction then racket-head scale
-            corrected_peak = batch_peak * 2.5
-            speed_mph = corrected_peak * 1.4  # tuned for ~40-80mph range
-
-            fatigued, readiness = self.oracle.predict_fatigue(1.0)
-            self.cooldown_until = current_time + self.COOLDOWN
-
-            print(f"🎾 Shot! Peak={batch_peak:.2f} rad/s → {speed_mph:.1f} MPH | "
-                  f"clean={clean_contact} sustained={sustained*10}ms")
-
-            results.append({
-                "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
-                "shot_id": str(int(time.time())),
-                "mode": mode,
-                "metrics": {
-                    "score": 85.0,
-                    "speed_mph": speed_mph,
-                    "spin_rpm": None,
-                    "readiness_pct": readiness,
-                    "hr_bpm": int(samples[-1].get('heartRate', 70))
-                },
-                "flags": {
-                    "micro_fatigue": fatigued,
-                    "oracle_grounded": True,
-                    "clean_contact": clean_contact
-                },
-                "peak_rad": batch_peak,
-                "peak_sample": {
-                    "quat_w": peak_sample.get('quaternionW'),
-                    "quat_x": peak_sample.get('quaternionX'),
-                    "quat_y": peak_sample.get('quaternionY'),
-                    "quat_z": peak_sample.get('quaternionZ'),
-                    "rot_x":  peak_sample.get('rotationRateX'),
-                    "rot_y":  peak_sample.get('rotationRateY'),
-                    "rot_z":  peak_sample.get('rotationRateZ'),
-                }
-            })
+            results.append(self._emit_shot(
+                peak_sample=peak_sample,
+                batch_peak=batch_peak,
+                dominance_ratio=dominance_ratio,
+                sustained=sustained,
+                mode=mode,
+                hr_bpm=samples[-1].get("heartRate", 70),
+                current_time=current_time,
+            ))
 
         return results
