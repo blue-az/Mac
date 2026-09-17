@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TennisContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var motionManager = TennisMotionManager()
 
     var body: some View {
@@ -87,6 +88,14 @@ struct TennisContentView: View {
             .tint(motionManager.isRecording ? .red : .blue)
             .buttonStyle(.borderedProminent)
             .frame(height: 35)
+        }
+        .onChange(of: scenePhase) { phase in
+            switch phase {
+            case .active: motionManager.recordScene("active")
+            case .inactive: motionManager.recordScene("inactive")
+            case .background: motionManager.recordScene("background")
+            @unknown default: motionManager.recordScene("unknown")
+            }
         }
         .onChange(of: motionManager.shotCount) { _ in
             if !motionManager.lastShotCleanContact {

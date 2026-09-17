@@ -170,7 +170,8 @@ async def websocket_endpoint(websocket: WebSocket):
     start_epoch = int(time.time())
     session_id = time.strftime("oracle_%Y%m%d_%H%M%S", time.localtime(start_epoch))
     persist_session_start(session_id, start_epoch)
-    print(f"🎾 Tennis Watch connected: {session_id}")
+    client = websocket.client
+    print(f"🎾 Gateway connected: session={session_id} client={client}", flush=True)
     current_session = {
         "session_id": session_id,
         "started_at": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
@@ -179,6 +180,10 @@ async def websocket_endpoint(websocket: WebSocket):
         "sample_count": 0,
         "shots": []
     }
+    # WatchConnectivity has been observed delivering the same sendMessage batch twice
+    # (identical raw_sensor_buffer timestamps, 2026-09-02). The Watch now tags each
+    # batch with a per-session batch_seq; skip anything already seen this connection.
+    seen_batch_seqs = set()
     try:
         while True:
             message_data = await websocket.receive()
@@ -199,6 +204,19 @@ async def websocket_endpoint(websocket: WebSocket):
                 continue
 
             if message.get("type") == "tennis_sensor_batch":
+                watch_session_uuid = message.get("session_uuid", "")
+                batch_seq = message.get("batch_seq")
+                print(
+                    f"📥 Batch received: backend_session={session_id} "
+                    f"watch_session={watch_session_uuid} batch_seq={batch_seq}",
+                    flush=True,
+                )
+                if batch_seq is not None and batch_seq in seen_batch_seqs:
+                    print(f"⚠️ Duplicate batch_seq={batch_seq} — skipped")
+                    continue
+                if batch_seq is not None:
+                    seen_batch_seqs.add(batch_seq)
+
                 samples = message.get("samples", [])
                 mode = message.get("mode", "strokes")
                 current_session["batches"] += 1
@@ -206,7 +224,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 persist_batch(session_id, current_session["batches"], samples)
                 print(
                     f"📊 Received batch: {len(samples)} samples "
-                    f"(mode={mode}, total={current_session['sample_count']})"
+                    f"(mode={mode}, total={current_session['sample_count']})",
+                    flush=True,
                 )
                 shots = detector.process_samples(samples, mode)
 
@@ -218,14 +237,18 @@ async def websocket_endpoint(websocket: WebSocket):
                         "shot": shot
                     }))
                     print(f"🎾 Shot sent: {shot['metrics']['speed_mph']:.1f} mph, "
-                          f"clean={shot['flags']['clean_contact']}")
+                          f"clean={shot['flags']['clean_contact']}", flush=True)
 
-    except WebSocketDisconnect:
-        print("🎾 Tennis Watch disconnected")
+    except WebSocketDisconnect as exc:
+        print(f"🎾 Gateway disconnected: session={session_id} code={exc.code} reason={exc.reason or ''}", flush=True)
+    except Exception as exc:
+        print(f"❌ Gateway error: session={session_id} type={type(exc).__name__} error={exc}", flush=True)
+        raise
     finally:
         end_epoch = int(time.time())
         current_session["ended_at"] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(end_epoch))
         persist_session_end(session_id, end_epoch, len(current_session["shots"]))
+        print(f"🎾 Gateway session finalized: session={session_id} shots={len(current_session['shots'])}", flush=True)
 
 
 @app.get("/sessions/latest")
