@@ -104,13 +104,13 @@ class TennisBackendClient: NSObject, ObservableObject {
     }
 
     private func handlePayload(_ data: Data) {
-        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-           let type = json["type"] as? String, type == "tennis_shot_detected" {
-            if WCSession.default.isReachable {
-                WCSession.default.sendMessage(json, replyHandler: nil)
-            } else {
-                WCSession.default.transferUserInfo(json)
-            }
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let type = json["type"] as? String else { return }
+        guard type == "tennis_shot_detected" || type == "batch_ack" else { return }
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(json, replyHandler: nil)
+        } else {
+            WCSession.default.transferUserInfo(json)
         }
     }
 }

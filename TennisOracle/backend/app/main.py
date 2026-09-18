@@ -51,6 +51,17 @@ def init_db():
             FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON DELETE CASCADE
         )
     """)
+    for col, typedef in [("watch_session_uuid", "TEXT"), ("batch_seq", "INTEGER")]:
+        try:
+            cur.execute(f"ALTER TABLE raw_sensor_buffer ADD COLUMN {col} {typedef}")
+        except sqlite3.OperationalError as exc:
+            if "duplicate column name" not in str(exc).lower():
+                raise
+    cur.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_raw_sensor_watch_batch
+        ON raw_sensor_buffer(watch_session_uuid, batch_seq)
+        WHERE watch_session_uuid IS NOT NULL AND batch_seq IS NOT NULL
+    """)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS oracle_shots (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -111,9 +122,15 @@ def samples_to_csv(samples: List[Dict]) -> bytes:
     return ("\n".join(rows) + "\n").encode("utf-8")
 
 
-def persist_batch(session_id: str, batch_index: int, samples: List[Dict]):
+def persist_batch(
+    session_id: str,
+    batch_index: int,
+    samples: List[Dict],
+    watch_session_uuid: str = "",
+    batch_seq: int | None = None,
+) -> bool:
     if not samples:
-        return
+        return False
     timestamps = [
         float(sample["timestamp"])
         for sample in samples
@@ -123,20 +140,24 @@ def persist_batch(session_id: str, batch_index: int, samples: List[Dict]):
     end_ts = max(timestamps) if timestamps else start_ts
     buffer_id = f"{session_id}_b{batch_index:06d}_{uuid.uuid4().hex[:8]}"
     con = sqlite3.connect(DB_PATH)
-    con.execute("""
-        INSERT INTO raw_sensor_buffer
-            (buffer_id, session_id, start_timestamp, end_timestamp, sample_count, compressed_data)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (
-        buffer_id,
-        session_id,
-        start_ts,
-        end_ts,
-        len(samples),
-        samples_to_csv(samples),
-    ))
+    if watch_session_uuid and batch_seq is not None:
+        cur = con.execute("""
+            INSERT OR IGNORE INTO raw_sensor_buffer
+                (buffer_id, session_id, start_timestamp, end_timestamp, sample_count,
+                 compressed_data, watch_session_uuid, batch_seq)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (buffer_id, session_id, start_ts, end_ts, len(samples),
+              samples_to_csv(samples), watch_session_uuid, batch_seq))
+    else:
+        cur = con.execute("""
+            INSERT INTO raw_sensor_buffer
+                (buffer_id, session_id, start_timestamp, end_timestamp, sample_count, compressed_data)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (buffer_id, session_id, start_ts, end_ts, len(samples), samples_to_csv(samples)))
+    inserted = cur.rowcount == 1
     con.commit()
     con.close()
+    return inserted
 
 
 def persist_shot(shot: Dict, session_id: str):
@@ -220,8 +241,21 @@ async def websocket_endpoint(websocket: WebSocket):
                 samples = message.get("samples", [])
                 mode = message.get("mode", "strokes")
                 current_session["batches"] += 1
-                current_session["sample_count"] += len(samples)
-                persist_batch(session_id, current_session["batches"], samples)
+                inserted = persist_batch(
+                    session_id, current_session["batches"], samples,
+                    watch_session_uuid, batch_seq,
+                )
+                if inserted:
+                    current_session["sample_count"] += len(samples)
+                await websocket.send_json({
+                    "type": "batch_ack",
+                    "session_uuid": watch_session_uuid,
+                    "batch_seq": batch_seq,
+                    "status": "persisted" if inserted else "duplicate",
+                })
+                if not inserted:
+                    print(f"↩️ Duplicate persisted batch: watch_session={watch_session_uuid} batch_seq={batch_seq}", flush=True)
+                    continue
                 print(
                     f"📊 Received batch: {len(samples)} samples "
                     f"(mode={mode}, total={current_session['sample_count']})",

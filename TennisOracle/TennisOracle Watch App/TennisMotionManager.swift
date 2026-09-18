@@ -79,6 +79,7 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     private var sessionStartTime: Date?
     private var sessionUUID: String?
     private let diagnostics = TennisDiagnostics()
+    private let outboxDirectory: URL
     private var sampleBuffer: [TennisSensorSample] = []
     private let batchSize = 50
     // Identifies each batch so the Mac can drop duplicates — WatchConnectivity has been
@@ -89,6 +90,9 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     let sampleRate: Double = 100.0 
 
     override init() {
+        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        outboxDirectory = base.appendingPathComponent("tennis-oracle-outbox", isDirectory: true)
+        try? FileManager.default.createDirectory(at: outboxDirectory, withIntermediateDirectories: true)
         super.init()
         if WCSession.isSupported() {
             WCSession.default.delegate = self
@@ -111,14 +115,20 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     }
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
-        if message["type"] as? String == "tennis_shot_detected" {
-            applyShot(message)
-        }
+        handleIncoming(message)
     }
 
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
-        if userInfo["type"] as? String == "tennis_shot_detected" {
-            applyShot(userInfo)
+        handleIncoming(userInfo)
+    }
+
+    private func handleIncoming(_ message: [String: Any]) {
+        if message["type"] as? String == "tennis_shot_detected" { applyShot(message) }
+        if message["type"] as? String == "batch_ack",
+           let seq = message["batch_seq"] as? Int,
+           let sid = message["session_uuid"] as? String {
+            removeOutbox(sessionID: sid, batchSeq: seq)
+            diagnostics.record("batch_ack_received", fields: ["session_uuid": sid, "batch_seq": seq, "status": message["status"] ?? ""])
         }
     }
 
@@ -247,6 +257,7 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
             "batch_seq": batchSeq
         ]
 
+        persistOutbox(message, sessionID: sessionID, batchSeq: batchSeq)
         if WCSession.default.isReachable {
             WCSession.default.sendMessage(message, replyHandler: { [weak self] _ in
                 self?.diagnostics.record("batch_send_completed", fields: ["session_uuid": sessionID, "batch_seq": batchSeq, "path": "sendMessage"])
@@ -258,6 +269,22 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
             diagnostics.record("batch_send_completed", fields: ["session_uuid": sessionID, "batch_seq": batchSeq, "path": "transferUserInfo"])
         }
         sampleBuffer.removeAll()
+    }
+
+    private func persistOutbox(_ message: [String: Any], sessionID: String, batchSeq: Int) {
+        guard let data = try? JSONSerialization.data(withJSONObject: message) else { return }
+        let url = outboxDirectory.appendingPathComponent("\(sessionID)_\(batchSeq).json")
+        do {
+            try data.write(to: url, options: .atomic)
+            diagnostics.record("outbox_persisted", fields: ["session_uuid": sessionID, "batch_seq": batchSeq])
+        } catch {
+            diagnostics.record("outbox_persist_error", fields: ["session_uuid": sessionID, "batch_seq": batchSeq, "error": error.localizedDescription])
+        }
+    }
+
+    private func removeOutbox(sessionID: String, batchSeq: Int) {
+        let url = outboxDirectory.appendingPathComponent("\(sessionID)_\(batchSeq).json")
+        try? FileManager.default.removeItem(at: url)
     }
 
     func stopSession() {
