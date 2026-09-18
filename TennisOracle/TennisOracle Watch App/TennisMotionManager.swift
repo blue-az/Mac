@@ -108,10 +108,12 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
             "reachable": session.isReachable,
             "error": error?.localizedDescription ?? ""
         ])
+        retryPendingBatches()
     }
 
     func sessionReachabilityDidChange(_ session: WCSession) {
         diagnostics.record("wc_reachability", fields: ["reachable": session.isReachable])
+        retryPendingBatches()
     }
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
@@ -285,6 +287,19 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     private func removeOutbox(sessionID: String, batchSeq: Int) {
         let url = outboxDirectory.appendingPathComponent("\(sessionID)_\(batchSeq).json")
         try? FileManager.default.removeItem(at: url)
+    }
+
+    private func retryPendingBatches() {
+        guard WCSession.default.isReachable,
+              let files = try? FileManager.default.contentsOfDirectory(at: outboxDirectory, includingPropertiesForKeys: nil) else { return }
+        for url in files where url.pathExtension == "json" {
+            guard let data = try? Data(contentsOf: url),
+                  let message = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { continue }
+            WCSession.default.sendMessage(message, replyHandler: nil) { [weak self] error in
+                self?.diagnostics.record("batch_retry_error", fields: ["error": error.localizedDescription])
+            }
+            diagnostics.record("batch_retry", fields: ["file": url.lastPathComponent])
+        }
     }
 
     func stopSession() {

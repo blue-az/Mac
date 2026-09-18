@@ -63,6 +63,21 @@ def init_db():
         WHERE watch_session_uuid IS NOT NULL AND batch_seq IS NOT NULL
     """)
     cur.execute("""
+        CREATE TABLE IF NOT EXISTS transport_gaps (
+            watch_session_uuid TEXT NOT NULL,
+            missing_seq INTEGER NOT NULL,
+            first_seen INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+            filled_at INTEGER,
+            PRIMARY KEY (watch_session_uuid, missing_seq)
+        )
+    """)
+    for col, typedef in [("transport_status", "TEXT"), ("missing_sequences", "TEXT")]:
+        try:
+            cur.execute(f"ALTER TABLE sessions ADD COLUMN {col} {typedef}")
+        except sqlite3.OperationalError as exc:
+            if "duplicate column name" not in str(exc).lower():
+                raise
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS oracle_shots (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             ts TEXT NOT NULL,
@@ -95,15 +110,18 @@ def persist_session_start(session_id: str, start_epoch: int):
     con.close()
 
 
-def persist_session_end(session_id: str, end_epoch: int, total_shots: int):
+def persist_session_end(session_id: str, end_epoch: int, total_shots: int,
+                        transport_status: str = "clean", missing_sequences: str = "[]"):
     con = sqlite3.connect(DB_PATH)
     con.execute("""
         UPDATE sessions
         SET end_time = ?,
             duration_minutes = (? - start_time) / 60.0,
-            total_shots = ?
+            total_shots = ?,
+            transport_status = ?,
+            missing_sequences = ?
         WHERE session_id = ?
-    """, (end_epoch, end_epoch, total_shots, session_id))
+    """, (end_epoch, end_epoch, total_shots, transport_status, missing_sequences, session_id))
     con.commit()
     con.close()
 
@@ -205,6 +223,7 @@ async def websocket_endpoint(websocket: WebSocket):
     # (identical raw_sensor_buffer timestamps, 2026-09-02). The Watch now tags each
     # batch with a per-session batch_seq; skip anything already seen this connection.
     seen_batch_seqs = set()
+    last_seq_by_watch = {}
     try:
         while True:
             message_data = await websocket.receive()
@@ -232,6 +251,17 @@ async def websocket_endpoint(websocket: WebSocket):
                     f"watch_session={watch_session_uuid} batch_seq={batch_seq}",
                     flush=True,
                 )
+                if watch_session_uuid and batch_seq is not None:
+                    previous = last_seq_by_watch.get(watch_session_uuid)
+                    if previous is not None and batch_seq > previous + 1:
+                        con_gap = sqlite3.connect(DB_PATH)
+                        for missing in range(previous + 1, batch_seq):
+                            con_gap.execute("INSERT OR IGNORE INTO transport_gaps (watch_session_uuid, missing_seq) VALUES (?, ?)", (watch_session_uuid, missing))
+                        con_gap.commit(); con_gap.close()
+                    last_seq_by_watch[watch_session_uuid] = max(batch_seq, previous or batch_seq)
+                    con_gap = sqlite3.connect(DB_PATH)
+                    con_gap.execute("UPDATE transport_gaps SET filled_at=strftime('%s','now') WHERE watch_session_uuid=? AND missing_seq=? AND filled_at IS NULL", (watch_session_uuid, batch_seq))
+                    con_gap.commit(); con_gap.close()
                 if batch_seq is not None and batch_seq in seen_batch_seqs:
                     print(f"⚠️ Duplicate batch_seq={batch_seq} — skipped")
                     continue
@@ -281,13 +311,25 @@ async def websocket_endpoint(websocket: WebSocket):
     finally:
         end_epoch = int(time.time())
         current_session["ended_at"] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(end_epoch))
-        persist_session_end(session_id, end_epoch, len(current_session["shots"]))
-        print(f"🎾 Gateway session finalized: session={session_id} shots={len(current_session['shots'])}", flush=True)
+        con_gap = sqlite3.connect(DB_PATH)
+        missing = [r[0] for r in con_gap.execute("SELECT missing_seq FROM transport_gaps WHERE filled_at IS NULL AND watch_session_uuid IN (SELECT DISTINCT watch_session_uuid FROM raw_sensor_buffer WHERE session_id=?) ORDER BY missing_seq", (session_id,))]
+        con_gap.close()
+        status = "clean" if not missing else "loss_report_required"
+        persist_session_end(session_id, end_epoch, len(current_session["shots"]), status, json.dumps(missing))
+        print(f"🎾 Gateway session finalized: session={session_id} shots={len(current_session['shots'])} transport={status} missing={missing}", flush=True)
 
 
 @app.get("/sessions/latest")
 async def get_latest_session():
     return JSONResponse(content=current_session)
+
+
+@app.get("/diagnostics/transport")
+async def get_transport_diagnostics():
+    con = sqlite3.connect(DB_PATH)
+    rows = con.execute("SELECT watch_session_uuid, COUNT(*), SUM(filled_at IS NULL), MAX(missing_seq) FROM transport_gaps GROUP BY watch_session_uuid").fetchall()
+    con.close()
+    return JSONResponse(content={"sessions": [{"session_uuid": r[0], "gap_count": r[1], "pending_gaps": r[2], "last_missing_seq": r[3]} for r in rows]})
 
 
 if __name__ == "__main__":
