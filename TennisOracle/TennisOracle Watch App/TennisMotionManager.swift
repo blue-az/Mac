@@ -292,13 +292,17 @@ class TennisMotionManager: NSObject, ObservableObject, WCSessionDelegate {
     private func retryPendingBatches() {
         guard WCSession.default.isReachable,
               let files = try? FileManager.default.contentsOfDirectory(at: outboxDirectory, includingPropertiesForKeys: nil) else { return }
-        for url in files where url.pathExtension == "json" {
+        guard let activeID = sessionUUID else {
+            diagnostics.record("outbox_retry_deferred", fields: ["reason": "no_active_session", "pending_files": files.count])
+            return
+        }
+        for url in files where url.pathExtension == "json" && url.lastPathComponent.hasPrefix(activeID + "_") {
             guard let data = try? Data(contentsOf: url),
                   let message = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { continue }
             WCSession.default.sendMessage(message, replyHandler: nil) { [weak self] error in
                 self?.diagnostics.record("batch_retry_error", fields: ["error": error.localizedDescription])
             }
-            diagnostics.record("batch_retry", fields: ["file": url.lastPathComponent])
+            diagnostics.record("batch_retry", fields: ["file": url.lastPathComponent, "session_uuid": activeID])
         }
     }
 

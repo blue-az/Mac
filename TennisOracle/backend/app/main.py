@@ -17,6 +17,8 @@ detector = TennisShotDetector(oracle)
 
 current_session: Dict = {
     "session_id": None,
+    "watch_session_uuid": None,
+    "quarantined_batches": 0,
     "started_at": None,
     "ended_at": None,
     "batches": 0,
@@ -98,6 +100,12 @@ def init_db():
                 raise
     con.commit()
     con.close()
+
+
+def missing_sequences(previous: int | None, current: int | None) -> list[int]:
+    if previous is None or current is None or current <= previous + 1:
+        return []
+    return list(range(previous + 1, current))
 
 
 def persist_session_start(session_id: str, start_epoch: int):
@@ -213,6 +221,8 @@ async def websocket_endpoint(websocket: WebSocket):
     print(f"🎾 Gateway connected: session={session_id} client={client}", flush=True)
     current_session = {
         "session_id": session_id,
+        "watch_session_uuid": None,
+        "quarantined_batches": 0,
         "started_at": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
         "ended_at": None,
         "batches": 0,
@@ -251,12 +261,17 @@ async def websocket_endpoint(websocket: WebSocket):
                     f"watch_session={watch_session_uuid} batch_seq={batch_seq}",
                     flush=True,
                 )
+                if watch_session_uuid and current_session["watch_session_uuid"] is None:
+                    current_session["watch_session_uuid"] = watch_session_uuid
+                if watch_session_uuid and current_session["watch_session_uuid"] != watch_session_uuid:
+                    current_session["quarantined_batches"] += 1
+                    print(f"🚧 Quarantined cross-session batch: watch_session={watch_session_uuid} expected={current_session['watch_session_uuid']} seq={batch_seq}", flush=True)
+                    continue
                 if watch_session_uuid and batch_seq is not None:
                     previous = last_seq_by_watch.get(watch_session_uuid)
-                    if previous is not None and batch_seq > previous + 1:
+                    for missing in missing_sequences(previous, batch_seq):
                         con_gap = sqlite3.connect(DB_PATH)
-                        for missing in range(previous + 1, batch_seq):
-                            con_gap.execute("INSERT OR IGNORE INTO transport_gaps (watch_session_uuid, missing_seq) VALUES (?, ?)", (watch_session_uuid, missing))
+                        con_gap.execute("INSERT OR IGNORE INTO transport_gaps (watch_session_uuid, missing_seq) VALUES (?, ?)", (watch_session_uuid, missing))
                         con_gap.commit(); con_gap.close()
                     last_seq_by_watch[watch_session_uuid] = max(batch_seq, previous or batch_seq)
                     con_gap = sqlite3.connect(DB_PATH)
@@ -312,7 +327,7 @@ async def websocket_endpoint(websocket: WebSocket):
         end_epoch = int(time.time())
         current_session["ended_at"] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(end_epoch))
         con_gap = sqlite3.connect(DB_PATH)
-        missing = [r[0] for r in con_gap.execute("SELECT missing_seq FROM transport_gaps WHERE filled_at IS NULL AND watch_session_uuid IN (SELECT DISTINCT watch_session_uuid FROM raw_sensor_buffer WHERE session_id=?) ORDER BY missing_seq", (session_id,))]
+        missing = [r[0] for r in con_gap.execute("SELECT DISTINCT missing_seq FROM transport_gaps WHERE filled_at IS NULL AND watch_session_uuid IN (SELECT DISTINCT watch_session_uuid FROM raw_sensor_buffer WHERE session_id=?) ORDER BY missing_seq", (session_id,))]
         con_gap.close()
         status = "clean" if not missing else "loss_report_required"
         persist_session_end(session_id, end_epoch, len(current_session["shots"]), status, json.dumps(missing))
@@ -327,7 +342,7 @@ async def get_latest_session():
 @app.get("/diagnostics/transport")
 async def get_transport_diagnostics():
     con = sqlite3.connect(DB_PATH)
-    rows = con.execute("SELECT watch_session_uuid, COUNT(*), SUM(filled_at IS NULL), MAX(missing_seq) FROM transport_gaps GROUP BY watch_session_uuid").fetchall()
+    rows = con.execute("SELECT watch_session_uuid, COUNT(DISTINCT missing_seq), SUM(filled_at IS NULL), MAX(missing_seq) FROM transport_gaps GROUP BY watch_session_uuid").fetchall()
     con.close()
     return JSONResponse(content={"sessions": [{"session_uuid": r[0], "gap_count": r[1], "pending_gaps": r[2], "last_missing_seq": r[3]} for r in rows]})
 
